@@ -1,6 +1,5 @@
-package com.cloudera.ccp.parsers;
+package com.cloudera.ccp.chains.parsers;
 
-import java.util.Collections;
 import java.util.List;
 
 public interface Parser {

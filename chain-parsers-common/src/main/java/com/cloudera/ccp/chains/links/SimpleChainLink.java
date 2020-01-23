@@ -1,4 +1,7 @@
-package com.cloudera.ccp.parsers;
+package com.cloudera.ccp.chains.links;
+
+import com.cloudera.ccp.chains.parsers.Message;
+import com.cloudera.ccp.chains.parsers.Parser;
 
 import java.util.Optional;
 
@@ -21,7 +24,7 @@ public class SimpleChainLink implements ChainLink {
     }
 
     @Override
-    public Optional<ChainLink> getNext() {
+    public Optional<ChainLink> getNext(Message message) {
         return next;
     }
 

@@ -1,4 +1,4 @@
-package com.cloudera.ccp.parsers;
+package com.cloudera.ccp.chains.parsers;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Enables parsing of any delimited text like CSV.
+ * Parses delimited text like CSV.
  */
 public class CSVParser implements Parser {
 

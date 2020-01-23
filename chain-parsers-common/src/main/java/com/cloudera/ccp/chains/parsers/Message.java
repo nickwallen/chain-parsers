@@ -1,4 +1,4 @@
-package com.cloudera.ccp.parsers;
+package com.cloudera.ccp.chains.parsers;
 
 
 import java.util.HashMap;
