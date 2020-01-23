@@ -54,18 +54,26 @@ public class Router implements Parser, ChainLink {
     }
 
     @Override
-    public ParserResult parse(Message message) {
+    public Message parse(Message input) {
         if(routingField == null) {
             throw new IllegalStateException("The routing field was not defined.");
         }
 
-        Optional<FieldValue> valueOpt = message.getField(routingField);
+        Optional<FieldValue> valueOpt = input.getField(routingField);
         if(valueOpt.isPresent()) {
+            // need to save off the field value for use when routing
             fieldValue = valueOpt.get();
-            return ParserResult.success(message, this);
+
+            // the message is not changed
+            return Message.builder()
+                    .withFields(input)
+                    .build();
+
         } else {
-            return ParserResult.error(message, this,
-                    new IllegalStateException(String.format("Missing expected field: '%s'", routingField.getFieldName())));
+            return Message.builder()
+                    .withFields(input)
+                    .withError(String.format("Missing expected field: '%s'", routingField.getFieldName()))
+                    .build();
         }
 
         // TODO define a "default" route

@@ -15,12 +15,13 @@ public class TimestampParser implements Parser {
     }
 
     @Override
-    public ParserResult parse(Message message) {
-        long timestamp = System.currentTimeMillis();
-
-        // TODO make message immutable?
-        message.withField(timestampFieldName, new FieldValue(Long.toString(timestamp)));
-        return ParserResult.success(message, this);
+    public Message parse(Message input) {
+        Long now = System.currentTimeMillis();
+        FieldValue timestamp = new FieldValue(Long.toString(now));
+        return Message.builder()
+                .withFields(input)
+                .addField(timestampFieldName, timestamp)
+                .build();
     }
 
     @Override
