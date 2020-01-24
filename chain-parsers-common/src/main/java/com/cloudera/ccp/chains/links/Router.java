@@ -5,6 +5,7 @@ import com.cloudera.ccp.chains.parsers.FieldValue;
 import com.cloudera.ccp.chains.parsers.Message;
 import com.cloudera.ccp.chains.parsers.NoopParser;
 import com.cloudera.ccp.chains.parsers.Parser;
+import com.cloudera.ccp.chains.parsers.Regex;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,15 +21,15 @@ public class Router implements ChainLink {
      * Defines one route that a {@link Message} may take.
      */
     public static class Route {
-        private String regex;
+        private Regex regex;
         private ChainLink next;
 
-        public Route(String regex, ChainLink next) {
+        public Route(Regex regex, ChainLink next) {
             this.regex = regex;
             this.next = next;
         }
 
-        public String getRegex() {
+        public Regex getRegex() {
             return regex;
         }
 
@@ -52,7 +53,7 @@ public class Router implements ChainLink {
         return this;
     }
 
-    public Router withRoute(String regex, ChainLink next) {
+    public Router withRoute(Regex regex, ChainLink next) {
         routes.add(new Route(regex, next));
         return this;
     }
@@ -74,7 +75,7 @@ public class Router implements ChainLink {
             FieldValue fieldValue = valueOpt.get();
 
             for(Route route: routes) {
-                if(fieldValue.getString().matches(route.getRegex())) {
+                if(fieldValue.getString().matches(route.getRegex().getRegex())) {
                     return Optional.of(route.getNext());
                 }
             }

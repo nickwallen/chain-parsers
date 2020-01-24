@@ -1,5 +1,6 @@
 package com.cloudera.ccp.chains;
 
+import com.cloudera.ccp.chains.links.ChainBuilder;
 import com.cloudera.ccp.chains.links.ChainLink;
 import com.cloudera.ccp.chains.links.Router;
 import com.cloudera.ccp.chains.links.SimpleChainLink;
@@ -40,12 +41,6 @@ public class ParserChainRunner {
         FieldName routerField = new FieldName("asa_tag");
         FieldName timestampField = new FieldName("processing_time");
 
-        // the message that needs parsed
-        String input = "%ASA-6-302021: Teardown ICMP connection for faddr 10.22.8.74/0(LOCAL\\user.name) gaddr 10.22.8.205/0 laddr 10.22.8.205/0";
-        Message message = Message.builder()
-                .addField(originalField, new FieldValue(input))
-                .build();
-
         // a csv parser is used to extract the 'asa_tag' for routing
         CSVParser csvParser = new CSVParser()
                 .withInputField(originalField)
@@ -57,24 +52,38 @@ public class ParserChainRunner {
                 .withFieldName(timestampField);
 
         // CSV -> Router -> Timestamp
-        // TODO does this have to be so ugly?
-//        ChainLink chain = ChainBuilder()
-//                .then(csvParser)
-//                .then("%ASA-6-302021:", timestampParser)
-//                .head();
+        ChainLink first = new ChainBuilder()
+                .then(csvParser)
+                .routeBy(routerField)
+                .then(new Regex("%ASA-6-302021:"), timestampParser)
+                .head();
 
-        SimpleChainLink first = new SimpleChainLink(csvParser);
-        Router second = new Router()
-                .withFieldName(routerField);
-        ChainLink third = new SimpleChainLink(timestampParser);
-        first.setNext(second);
-        second.withRoute("%ASA-6-302021:", third);
+//        SimpleChainLink first = new SimpleChainLink(csvParser);
+//        Router second = new Router()
+//                .withFieldName(routerField);
+//        ChainLink third = new SimpleChainLink(timestampParser);
+//        first.setNext(second);
+//        second.withRoute(new Regex("%ASA-6-302021:"), third);
 
-        // run the parser chain
+        // a message that needs to be timestamped
+        String input1 = "%ASA-6-302021: Teardown ICMP connection for faddr 10.22.8.74/0(LOCAL\\user.name) gaddr 10.22.8.205/0 laddr 10.22.8.205/0";
+        Message message1 = Message.builder()
+                .addField(originalField, new FieldValue(input1))
+                .build();
+
         ParserChainRunner runner = new ParserChainRunner();
-        List<Message> results = runner.run(message, first);
-        for(Message result: results) {
-            System.out.println("result: " + result);
+        for(Message result: runner.run(message1, first)) {
+            System.out.println("message1: " + result);
+        }
+
+        // a message that will not get timestamped
+        String input2 = "%ASA-9-102021: Teardown ICMP connection for faddr 10.22.8.74/0(LOCAL\\user.name) gaddr 10.22.8.205/0 laddr 10.22.8.205/0";
+        Message message2 = Message.builder()
+                .addField(originalField, new FieldValue(input2))
+                .build();
+
+        for(Message result: runner.run(message2, first)) {
+            System.out.println("message2: " + result);
         }
     }
 }
