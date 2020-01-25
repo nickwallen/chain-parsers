@@ -75,7 +75,7 @@ public class CSVParser implements Parser {
 
     @Override
     public Message parse(Message input) {
-        Message.MessageBuilder output = Message.builder()
+        Message.Builder output = Message.builder()
                 .withFields(input);
 
         Optional<FieldValue> fieldValue = input.getField(inputField);
