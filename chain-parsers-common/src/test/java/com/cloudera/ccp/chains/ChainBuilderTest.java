@@ -57,4 +57,29 @@ public class ChainBuilderTest {
         ChainLink next = head.getNext(message).get();
         assertTrue(next instanceof Router);
     }
+
+    @Test
+    void twoChains() {
+        Message message = Message.builder().build();
+        Parser first = new TimestampParser();
+        Parser second = new TimestampParser();
+
+        ChainLink subChain = new ChainBuilder()
+                .then(second)
+                .head();
+
+        ChainLink head = new ChainBuilder()
+                .then(first)
+                .routeBy(FieldName.of("timestamp"))
+                .then(new Regex("[0-9]+"), subChain)
+                .head();
+
+        // validate the first link
+        assertEquals(first, head.getParser());
+        assertTrue(head.getNext(message).isPresent());
+
+        // validate the router
+        ChainLink next = head.getNext(message).get();
+        assertTrue(next instanceof Router);
+    }
 }
