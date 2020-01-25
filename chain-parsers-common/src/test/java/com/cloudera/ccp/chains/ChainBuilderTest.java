@@ -46,7 +46,7 @@ public class ChainBuilderTest {
         ChainLink head = new ChainBuilder()
                 .then(first)
                 .routeBy(FieldName.of("timestamp"))
-                .then(new Regex("[0-9]+"), second)
+                .then(Regex.of("[0-9]+"), second)
                 .head();
 
         // validate the first link
@@ -71,7 +71,7 @@ public class ChainBuilderTest {
         ChainLink head = new ChainBuilder()
                 .then(first)
                 .routeBy(FieldName.of("timestamp"))
-                .then(new Regex("[0-9]+"), subChain)
+                .then(Regex.of("[0-9]+"), subChain)
                 .head();
 
         // validate the first link

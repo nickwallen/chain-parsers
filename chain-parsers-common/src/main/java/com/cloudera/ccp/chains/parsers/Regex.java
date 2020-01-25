@@ -8,10 +8,14 @@ import java.util.regex.Pattern;
 public final class Regex {
     private final String regex;
 
-    public Regex(String regex) {
+    private Regex(String regex) {
         // a PatternSyntaxException is thrown if the pattern is not valid
         Pattern.compile(regex);
         this.regex = regex;
+    }
+
+    public static final Regex of(String regex) {
+        return new Regex(regex);
     }
 
     /**

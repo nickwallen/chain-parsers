@@ -45,7 +45,7 @@ public class CSVParser implements Parser {
 
     public CSVParser() {
         outputFields = new ArrayList<>();
-        delimiter = new Regex(",");
+        delimiter = Regex.of(",");
     }
 
     /**

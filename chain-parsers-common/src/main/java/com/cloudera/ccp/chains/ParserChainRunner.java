@@ -44,7 +44,7 @@ public class ParserChainRunner {
         // a csv parser is used to extract the 'asa_tag' for routing
         CSVParser csvParser = new CSVParser()
                 .withInputField(originalField)
-                .withDelimiter(new Regex("\\s+"))
+                .withDelimiter(Regex.of("\\s+"))
                 .withOutputField(routerField, 0);
 
         // timestamps the message with 'processing_time'
@@ -55,7 +55,7 @@ public class ParserChainRunner {
         ChainLink chain = new ChainBuilder()
                 .then(csvParser)
                 .routeBy(routerField)
-                .then(new Regex("%ASA-6-302021:"), timestampParser)
+                .then(Regex.of("%ASA-6-302021:"), timestampParser)
                 .head();
 
 //        SimpleChainLink first = new SimpleChainLink(csvParser);
