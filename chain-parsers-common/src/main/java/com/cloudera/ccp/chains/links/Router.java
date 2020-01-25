@@ -75,7 +75,8 @@ public class Router implements ChainLink {
             FieldValue fieldValue = valueOpt.get();
 
             for(Route route: routes) {
-                if(fieldValue.getString().matches(route.getRegex().getRegex())) {
+                Regex regex = route.getRegex();
+                if(regex.matches(fieldValue)) {
                     return Optional.of(route.getNext());
                 }
             }

@@ -80,12 +80,12 @@ public class CSVParser implements Parser {
 
         Optional<FieldValue> fieldValue = input.getField(inputField);
         if(fieldValue.isPresent()) {
-            String[] columns = fieldValue.get().getString().split(delimiter.getRegex());
+            String[] columns = fieldValue.get().toString().split(delimiter.toString());
             for(OutputField outputField : outputFields) {
 
                 if(columns.length > outputField.index) {
                     FieldName newFieldName = outputField.fieldName;
-                    FieldValue newFieldValue = new FieldValue(columns[outputField.index]);
+                    FieldValue newFieldValue = FieldValue.of(columns[outputField.index]);
                     output.addField(newFieldName, newFieldValue);
 
                 } else {

@@ -45,7 +45,7 @@ public class ChainBuilderTest {
 
         ChainLink head = new ChainBuilder()
                 .then(first)
-                .routeBy(new FieldName("timestamp"))
+                .routeBy(FieldName.of("timestamp"))
                 .then(new Regex("[0-9]+"), second)
                 .head();
 

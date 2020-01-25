@@ -9,17 +9,17 @@ import java.util.Objects;
  */
 public class FieldName {
     private static final String VALID_FIELD_NAME_REGEX = "[\\w\\d-_. ]+";
-    private String fieldName;
+    private final String fieldName;
 
-    public FieldName(String fieldName) {
+    public static final FieldName of(String fieldName) {
+        return new FieldName(fieldName);
+    }
+
+    private FieldName(String fieldName) {
         if(StringUtils.isBlank(fieldName) || !fieldName.matches(VALID_FIELD_NAME_REGEX)) {
             throw new IllegalArgumentException(String.format("Invalid field name: '%s'", fieldName));
         }
         this.fieldName = fieldName;
-    }
-
-    public String getFieldName() {
-        return fieldName;
     }
 
     @Override
@@ -37,6 +37,6 @@ public class FieldName {
 
     @Override
     public String toString() {
-        return "FieldName{" + fieldName + '}';
+        return fieldName;
     }
 }

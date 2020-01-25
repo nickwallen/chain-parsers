@@ -37,9 +37,9 @@ public class ParserChainRunner {
     }
 
     public static void main(String[] args) {
-        FieldName originalField = new FieldName("original_string");
-        FieldName routerField = new FieldName("asa_tag");
-        FieldName timestampField = new FieldName("processing_time");
+        FieldName originalField = FieldName.of("original_string");
+        FieldName routerField = FieldName.of("asa_tag");
+        FieldName timestampField = FieldName.of("processing_time");
 
         // a csv parser is used to extract the 'asa_tag' for routing
         CSVParser csvParser = new CSVParser()
@@ -52,7 +52,7 @@ public class ParserChainRunner {
                 .withFieldName(timestampField);
 
         // CSV -> Router -> Timestamp
-        ChainLink first = new ChainBuilder()
+        ChainLink chain = new ChainBuilder()
                 .then(csvParser)
                 .routeBy(routerField)
                 .then(new Regex("%ASA-6-302021:"), timestampParser)
@@ -68,21 +68,21 @@ public class ParserChainRunner {
         // a message that needs to be timestamped
         String input1 = "%ASA-6-302021: Teardown ICMP connection for faddr 10.22.8.74/0(LOCAL\\user.name) gaddr 10.22.8.205/0 laddr 10.22.8.205/0";
         Message message1 = Message.builder()
-                .addField(originalField, new FieldValue(input1))
+                .addField(originalField, FieldValue.of(input1))
                 .build();
 
         ParserChainRunner runner = new ParserChainRunner();
-        for(Message result: runner.run(message1, first)) {
+        for(Message result: runner.run(message1, chain)) {
             System.out.println("message1: " + result);
         }
 
         // a message that will not get timestamped
         String input2 = "%ASA-9-102021: Teardown ICMP connection for faddr 10.22.8.74/0(LOCAL\\user.name) gaddr 10.22.8.205/0 laddr 10.22.8.205/0";
         Message message2 = Message.builder()
-                .addField(originalField, new FieldValue(input2))
+                .addField(originalField, FieldValue.of(input2))
                 .build();
 
-        for(Message result: runner.run(message2, first)) {
+        for(Message result: runner.run(message2, chain)) {
             System.out.println("message2: " + result);
         }
     }

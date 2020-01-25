@@ -11,13 +11,13 @@ public class TimestampParser implements Parser {
     private FieldName timestampFieldName;
 
     public TimestampParser() {
-        this.timestampFieldName = new FieldName("timestamp");
+        this.timestampFieldName = FieldName.of("timestamp");
     }
 
     @Override
     public Message parse(Message input) {
         Long now = System.currentTimeMillis();
-        FieldValue timestamp = new FieldValue(Long.toString(now));
+        FieldValue timestamp = FieldValue.of(Long.toString(now));
         return Message.builder()
                 .withFields(input)
                 .addField(timestampFieldName, timestamp)

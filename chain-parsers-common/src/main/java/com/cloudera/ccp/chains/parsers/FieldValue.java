@@ -6,21 +6,20 @@ import java.util.Objects;
  * The value of a field contained within a {@link Message}.
  */
 public class FieldValue {
-    private String value;
-
     // TODO does this need to be bytes?
+    private final String value;
 
-    public FieldValue(String value) {
-        this.value = value;
+    public static FieldValue of(String fieldValue) {
+        return new FieldValue(fieldValue);
     }
 
-    public String getString() {
-        return value;
+    private FieldValue(String value) {
+        this.value = value;
     }
 
     @Override
     public String toString() {
-        return "FieldValue{" + value +  '}';
+        return value;
     }
 
     @Override
