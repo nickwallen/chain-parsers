@@ -3,6 +3,7 @@ package com.cloudera.ccp.chains.parsers;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -28,27 +29,28 @@ public class Message {
         }
 
         public Builder withFields(Message message) {
+            Objects.requireNonNull(message);
             this.fields.putAll(message.fields);
             return this;
         }
 
         public Builder addField(FieldName name, FieldValue value) {
-            this.fields.put(name, value);
+            this.fields.put(Objects.requireNonNull(name), Objects.requireNonNull(value));
             return this;
         }
 
         public Builder removeField(FieldName name) {
-            this.fields.remove(name);
+            this.fields.remove(Objects.requireNonNull(name));
             return this;
         }
 
         public Builder withError(Throwable error) {
-            this.error = error;
+            this.error = Objects.requireNonNull(error);
             return this;
         }
 
         public Builder withError(String message) {
-            this.error = new IllegalStateException(message);
+            this.error = new IllegalStateException(Objects.requireNonNull(message));
             return this;
         }
 

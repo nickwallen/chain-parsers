@@ -3,6 +3,7 @@ package com.cloudera.ccp.chains.parsers;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -18,7 +19,7 @@ public class CSVParser implements Parser {
         private int index;
 
         public OutputField(FieldName fieldName, int index) {
-            this.fieldName = fieldName;
+            this.fieldName = Objects.requireNonNull(fieldName);
             this.index = index;
         }
 
@@ -52,7 +53,7 @@ public class CSVParser implements Parser {
      * @param inputField The name of the field containing the text to parse.
      */
     public CSVParser withInputField(FieldName inputField) {
-        this.inputField = inputField;
+        this.inputField = Objects.requireNonNull(inputField);
         return this;
     }
 
@@ -60,7 +61,7 @@ public class CSVParser implements Parser {
      * @param delimiter A character or regular expression defining the delimiter used to split the text.
      */
     public CSVParser withDelimiter(Regex delimiter) {
-        this.delimiter = delimiter;
+        this.delimiter = Objects.requireNonNull(delimiter);
         return this;
     }
 
@@ -82,8 +83,8 @@ public class CSVParser implements Parser {
         if(fieldValue.isPresent()) {
             String[] columns = fieldValue.get().toString().split(delimiter.toString());
             for(OutputField outputField : outputFields) {
-
                 if(columns.length > outputField.index) {
+                    // create a new field
                     FieldName newFieldName = outputField.fieldName;
                     FieldValue newFieldValue = FieldValue.of(columns[outputField.index]);
                     output.addField(newFieldName, newFieldValue);

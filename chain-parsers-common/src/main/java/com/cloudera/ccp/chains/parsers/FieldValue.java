@@ -13,8 +13,11 @@ public class FieldValue {
         return new FieldValue(fieldValue);
     }
 
+    /**
+     * Use {@link FieldValue#of(String)}.
+     */
     private FieldValue(String value) {
-        this.value = value;
+        this.value = Objects.requireNonNull(value);
     }
 
     @Override

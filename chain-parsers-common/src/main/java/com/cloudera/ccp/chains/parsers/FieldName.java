@@ -15,6 +15,9 @@ public class FieldName {
         return new FieldName(fieldName);
     }
 
+    /**
+     * Use {@link FieldName#of(String)}.
+     */
     private FieldName(String fieldName) {
         if(StringUtils.isBlank(fieldName) || !fieldName.matches(VALID_FIELD_NAME_REGEX)) {
             throw new IllegalArgumentException(String.format("Invalid field name: '%s'", fieldName));

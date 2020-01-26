@@ -10,9 +10,8 @@ public class NoopParser implements Parser {
 
     @Override
     public Message parse(Message message) {
-        return Message.builder()
-                .withFields(message)
-                .build();
+        // do nothing
+        return message;
     }
 
     @Override
