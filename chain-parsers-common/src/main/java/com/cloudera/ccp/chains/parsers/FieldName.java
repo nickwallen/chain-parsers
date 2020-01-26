@@ -1,6 +1,8 @@
 package com.cloudera.ccp.chains.parsers;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.Objects;
 
@@ -27,15 +29,23 @@ public class FieldName {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FieldName other = (FieldName) o;
-        return Objects.equals(fieldName, other.fieldName);
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        FieldName that = (FieldName) o;
+        return new EqualsBuilder()
+                .append(fieldName, that.fieldName)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fieldName);
+        return new HashCodeBuilder(17, 37)
+                .append(fieldName)
+                .toHashCode();
     }
 
     @Override

@@ -2,8 +2,6 @@ package com.cloudera.ccp.chains;
 
 import com.cloudera.ccp.chains.links.ChainBuilder;
 import com.cloudera.ccp.chains.links.ChainLink;
-import com.cloudera.ccp.chains.links.Router;
-import com.cloudera.ccp.chains.links.SimpleChainLink;
 import com.cloudera.ccp.chains.parsers.CSVParser;
 import com.cloudera.ccp.chains.parsers.FieldName;
 import com.cloudera.ccp.chains.parsers.FieldValue;

@@ -1,5 +1,8 @@
 package com.cloudera.ccp.chains.parsers;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -31,5 +34,28 @@ public final class Regex {
     @Override
     public String toString() {
         return regex;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Regex that = (Regex) o;
+        return new EqualsBuilder()
+                .append(regex, that.regex)
+                .append(pattern, that.pattern)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(regex)
+                .append(pattern)
+                .toHashCode();
     }
 }
