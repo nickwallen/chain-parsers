@@ -6,15 +6,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static java.lang.String.format;
+
 /**
  * Parses delimited text like CSV.
  */
 public class CSVParser implements Parser {
 
     /**
-     * Defines which output fields are created.
+     * Defines an output field that is created by the parser.
      */
-    public static class OutputField {
+    private static class OutputField {
         private FieldName fieldName;
         private int index;
 
@@ -22,31 +24,17 @@ public class CSVParser implements Parser {
             this.fieldName = Objects.requireNonNull(fieldName);
             this.index = index;
         }
-
-        public FieldName getFieldName() {
-            return fieldName;
-        }
-
-        public void setFieldName(FieldName fieldName) {
-            this.fieldName = fieldName;
-        }
-
-        public int getIndex() {
-            return index;
-        }
-
-        public void setIndex(int index) {
-            this.index = index;
-        }
     }
 
     private FieldName inputField;
     private Regex delimiter;
     private List<OutputField> outputFields;
+    private boolean trimWhitespace;
 
     public CSVParser() {
         outputFields = new ArrayList<>();
         delimiter = Regex.of(",");
+        trimWhitespace = true;
     }
 
     /**
@@ -74,6 +62,14 @@ public class CSVParser implements Parser {
         return this;
     }
 
+    /**
+     * @param trimWhitespace True, if whitespace should be trimmed from each value. Otherwise, false.
+     */
+    public CSVParser trimWhitespace(boolean trimWhitespace) {
+        this.trimWhitespace = trimWhitespace;
+        return this;
+    }
+
     @Override
     public Message parse(Message input) {
         Message.Builder output = Message.builder()
@@ -81,23 +77,31 @@ public class CSVParser implements Parser {
 
         Optional<FieldValue> fieldValue = input.getField(inputField);
         if(fieldValue.isPresent()) {
-            String[] columns = fieldValue.get().toString().split(delimiter.toString());
-            for(OutputField outputField : outputFields) {
-                if(columns.length > outputField.index) {
-                    // create a new field
-                    FieldName newFieldName = outputField.fieldName;
-                    FieldValue newFieldValue = FieldValue.of(columns[outputField.index]);
-                    output.addField(newFieldName, newFieldValue);
-
-                } else {
-                    // TODO debug log; index does not exist in the data
-                }
-            }
+            doParse(fieldValue.get().toString(), output);
         } else {
-            // TODO debug log; input field missing from message
+            output.withError(format("Missing the input field '%s'", inputField.toString()));
         }
 
         return output.build();
+    }
+
+    private void doParse(String valueToParse, Message.Builder output) {
+        String[] columns = valueToParse.split(delimiter.toString());
+        int width = columns.length;
+        for(OutputField outputField : outputFields) {
+            if(width > outputField.index) {
+                // create a new output field
+                String column = columns[outputField.index];
+                if(trimWhitespace) {
+                    column = column.trim();
+                }
+                output.addField(outputField.fieldName, FieldValue.of(column));
+
+            } else {
+                String err = format("Found %d column(s), index %d does not exist.", width, outputField.index);
+                output.withError(err);
+            }
+        }
     }
 
     @Override

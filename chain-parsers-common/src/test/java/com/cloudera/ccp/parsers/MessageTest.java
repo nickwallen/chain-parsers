@@ -7,12 +7,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MessageTest {
 
     @Test
-    public void addField() {
+    void addField() {
         Message message = Message.builder()
                 .addField(FieldName.of("field1"), FieldValue.of("value1"))
                 .addField(FieldName.of("field2"), FieldValue.of("value2"))
@@ -34,7 +33,7 @@ public class MessageTest {
     }
 
     @Test
-    public void removeField() {
+    void removeField() {
         Message original = Message.builder()
                 .addField(FieldName.of("field1"), FieldValue.of("value1"))
                 .addField(FieldName.of("field2"), FieldValue.of("value2"))
@@ -58,7 +57,7 @@ public class MessageTest {
     }
 
     @Test
-    public void withFields() {
+    void withFields() {
         Message original = Message.builder()
                 .addField(FieldName.of("field1"), FieldValue.of("value1"))
                 .addField(FieldName.of("field2"), FieldValue.of("value2"))
@@ -84,7 +83,7 @@ public class MessageTest {
     }
 
     @Test
-    public void withErrorMessage() {
+    void withErrorMessage() {
         final String errorMessage = "this is an error";
         Message original = Message.builder()
                 .withError(errorMessage)
@@ -93,7 +92,7 @@ public class MessageTest {
     }
 
     @Test
-    public void withError() {
+    void withError() {
         final Exception exception = new IllegalStateException("this is an error");
         Message original = Message.builder()
                 .withError(exception)
