@@ -1,6 +1,9 @@
 package com.cloudera.ccp.chains.parsers;
 
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -88,9 +91,33 @@ public class Message {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Message message = (Message) o;
+        return new EqualsBuilder()
+                .append(fields, message.fields)
+                .append(error, message.error)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(fields)
+                .append(error)
+                .toHashCode();
+    }
+
+    @Override
     public String toString() {
         return "Message{" +
                 "fields=" + fields +
+                ", error=" + error +
                 '}';
     }
 }

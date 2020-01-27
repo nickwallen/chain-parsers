@@ -4,47 +4,31 @@ import com.cloudera.ccp.chains.parsers.FieldName;
 import com.cloudera.ccp.chains.parsers.Parser;
 import com.cloudera.ccp.chains.parsers.Regex;
 
+import java.util.Objects;
+
 public class ChainBuilder {
-
-    // CSV -> Router -> Timestamp
-    // TODO does this have to be so ugly?
-    //        ChainLink chain = ChainBuilder()
-    //                .then(csvParser)
-    //                .then(asaTypeField, "%ASA-6-302021:", timestampParser)
-    //                .head();
-
-    //
-    //  ChainLink chain = ChainBuilder()
-    //          .routeBy(asaType)
-    //          .then("%ASA-6-302021:", timestampParser)
-    //          .then("%ASA-9-302021:", otherParser)
-
-    //
-    // ChainLink asa9Chain = ChainBuilder()
-    //          .then(csvParser)
-    //          .then(timestampParser)
-    //
-    // ChainLink mainChain = ChainBuilder()
-    //          .routeBy(asaType)
-    //          .then("%ASA-9-302021:", asa9Chain)
-    //
-
     private ChainLink head;
     private SimpleChainLink lastLink;
     private Router router;
 
+    /**
+     * Returns the head of the chain.
+     * @return The first link in the chain.
+     */
     public ChainLink head() {
-        return head;
+        return Objects.requireNonNull(head, "No chain defined yet.");
     }
 
     public ChainBuilder routeBy(FieldName routeBy) {
-        router = new Router()
-                .withFieldName(routeBy);
-
-        // TODO need to connect last link to the router
-        // add router to the existing chain
-        lastLink.setNext(router);
-//        lastLink = router;
+        // create the router
+        router = new Router().withFieldName(routeBy);
+        if(head == null) {
+            // this is a new chain starting with a router
+            this.head = router;
+        } else {
+            // add router to the existing chain
+            lastLink.setNext(router);
+        }
         return this;
     }
 
@@ -66,7 +50,7 @@ public class ChainBuilder {
 
     public ChainBuilder then(Parser parser) {
         if(router != null) {
-            throw new IllegalArgumentException("Cannot add another simple link after a router");
+            throw new IllegalStateException("Cannot add another simple link after a router");
         }
         return then(new SimpleChainLink(parser));
     }
