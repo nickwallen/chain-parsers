@@ -1,4 +1,10 @@
-package com.cloudera.ccp.chains.parsers;
+package com.cloudera.ccp.chains.parsers.core;
+
+import com.cloudera.ccp.chains.parsers.FieldName;
+import com.cloudera.ccp.chains.parsers.FieldValue;
+import com.cloudera.ccp.chains.parsers.Message;
+import com.cloudera.ccp.chains.parsers.Parser;
+import com.cloudera.ccp.chains.parsers.Regex;
 
 import java.util.ArrayList;
 import java.util.Collections;

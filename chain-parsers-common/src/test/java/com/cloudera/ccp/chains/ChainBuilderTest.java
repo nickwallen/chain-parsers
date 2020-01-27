@@ -7,7 +7,7 @@ import com.cloudera.ccp.chains.parsers.FieldName;
 import com.cloudera.ccp.chains.parsers.Message;
 import com.cloudera.ccp.chains.parsers.Parser;
 import com.cloudera.ccp.chains.parsers.Regex;
-import com.cloudera.ccp.chains.parsers.TimestampParser;
+import com.cloudera.ccp.chains.parsers.core.TimestampParser;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

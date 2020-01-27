@@ -2,13 +2,13 @@ package com.cloudera.ccp.chains;
 
 import com.cloudera.ccp.chains.links.ChainBuilder;
 import com.cloudera.ccp.chains.links.ChainLink;
-import com.cloudera.ccp.chains.parsers.CSVParser;
+import com.cloudera.ccp.chains.parsers.core.CSVParser;
 import com.cloudera.ccp.chains.parsers.FieldName;
 import com.cloudera.ccp.chains.parsers.FieldValue;
 import com.cloudera.ccp.chains.parsers.Message;
 import com.cloudera.ccp.chains.parsers.Parser;
 import com.cloudera.ccp.chains.parsers.Regex;
-import com.cloudera.ccp.chains.parsers.TimestampParser;
+import com.cloudera.ccp.chains.parsers.core.TimestampParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,6 @@ public class ParserChainRunner {
 
         Optional<ChainLink> next = Optional.of(head);
         do {
-            System.out.println("--> " + next.get().getParser().getClass().toString());
             Message input = results.get(results.size()-1);
             Parser parser = next.get().getParser();
             Message output = parser.parse(input);

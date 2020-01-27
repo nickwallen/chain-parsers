@@ -3,7 +3,7 @@ package com.cloudera.ccp.chains.links;
 import com.cloudera.ccp.chains.parsers.FieldName;
 import com.cloudera.ccp.chains.parsers.FieldValue;
 import com.cloudera.ccp.chains.parsers.Message;
-import com.cloudera.ccp.chains.parsers.NoopParser;
+import com.cloudera.ccp.chains.parsers.core.NoopParser;
 import com.cloudera.ccp.chains.parsers.Parser;
 import com.cloudera.ccp.chains.parsers.Regex;
 

@@ -1,6 +1,5 @@
-package com.cloudera.ccp.parsers;
+package com.cloudera.ccp.chains.parsers.core;
 
-import com.cloudera.ccp.chains.parsers.CSVParser;
 import com.cloudera.ccp.chains.parsers.FieldName;
 import com.cloudera.ccp.chains.parsers.FieldValue;
 import com.cloudera.ccp.chains.parsers.Message;

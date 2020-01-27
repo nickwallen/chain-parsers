@@ -1,8 +1,5 @@
-package com.cloudera.ccp.parsers;
+package com.cloudera.ccp.chains.parsers;
 
-import com.cloudera.ccp.chains.parsers.FieldName;
-import com.cloudera.ccp.chains.parsers.FieldValue;
-import com.cloudera.ccp.chains.parsers.Message;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
