@@ -15,78 +15,78 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ChainBuilderTest {
     Message message;
-    Parser first;
-    Parser second;
+    Parser firstParser;
+    Parser secondParser;
 
     @BeforeEach
     void setup() {
         message = Message.builder().build();
-        first = new TimestampParser();
-        second = new TimestampParser();
+        firstParser = new TimestampParser();
+        secondParser = new TimestampParser();
     }
 
     @Test
     void straightChain() {
         ChainLink head = new ChainBuilder()
-                .then(first)
-                .then(second)
+                .then(firstParser)
+                .then(secondParser)
                 .head();
 
         // validate the first link
-        assertEquals(first, head.getParser());
+        assertEquals(firstParser, head.getParser());
         assertTrue(head.getNext(message).isPresent());
 
         // validate the second link
         ChainLink next = head.getNext(message).get();
-        assertEquals(second, next.getParser());
+        assertEquals(secondParser, next.getParser());
         assertFalse(next.getNext(message).isPresent());
     }
 
     @Test
     void chainWithRouter() {
         ChainLink head = new ChainBuilder()
-                .then(first)
+                .then(firstParser)
                 .routeBy(FieldName.of("timestamp"))
-                .then(Regex.of("[0-9]+"), second)
+                .then(Regex.of("[0-9]+"), secondParser)
                 .head();
 
         // validate the first link
-        assertEquals(first, head.getParser());
+        assertEquals(firstParser, head.getParser());
         assertTrue(head.getNext(message).isPresent());
 
         // validate the router
         ChainLink next = head.getNext(message).get();
-        assertTrue(next instanceof Router);
+        assertTrue(next instanceof RouterLink);
     }
 
     @Test
     void routerFirstInChain() {
         ChainLink head = new ChainBuilder()
                 .routeBy(FieldName.of("timestamp"))
-                .then(Regex.of("[0-9]+"), second)
+                .then(Regex.of("[0-9]+"), secondParser)
                 .head();
-        assertTrue(head instanceof Router);
+        assertTrue(head instanceof RouterLink);
     }
 
     @Test
     void routerWithSubChains() {
         ChainLink subChain = new ChainBuilder()
-                .then(second)
+                .then(secondParser)
                 .head();
 
         ChainLink mainChain = new ChainBuilder()
-                .then(first)
+                .then(firstParser)
                 .routeBy(FieldName.of("timestamp"))
                 .then(Regex.of("[0-9]+"), subChain)
                 .head();
 
         // validate the main chain
-        assertEquals(first, mainChain.getParser());
+        assertEquals(firstParser, mainChain.getParser());
         assertTrue(mainChain.getNext(message).isPresent());
 
         // validate the router
         ChainLink next = mainChain.getNext(message).get();
-        assertTrue(next instanceof Router);
+        assertTrue(next instanceof RouterLink);
     }
 
     @Test
@@ -101,7 +101,7 @@ public class ChainBuilderTest {
         assertThrows(IllegalStateException.class,
                 () -> new ChainBuilder()
                         .routeBy(FieldName.of("timestamp"))
-                        .then(second)
+                        .then(secondParser)
                         .head());
     }
 
@@ -110,7 +110,7 @@ public class ChainBuilderTest {
         // cannot define a route before calling `routeBy`
         assertThrows(IllegalStateException.class,
                 () -> new ChainBuilder()
-                        .then(Regex.of("[0-9]+"), second)
+                        .then(Regex.of("[0-9]+"), secondParser)
                         .head());
     }
 }

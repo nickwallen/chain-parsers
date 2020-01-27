@@ -16,7 +16,7 @@ import java.util.Optional;
  * Allows messages to be parsed differently based on values contained
  * within a message.
  */
-public class Router implements ChainLink {
+public class RouterLink implements ChainLink {
 
     /**
      * Defines one route that a {@link Message} may take.
@@ -36,18 +36,25 @@ public class Router implements ChainLink {
      */
     private FieldName routingField;
     private List<Route> routes;
+    private Optional<ChainLink> defaultRoute;
 
-    public Router() {
+    public RouterLink() {
         this.routes = new ArrayList<>();
+        this.defaultRoute = Optional.empty();
     }
 
-    public Router withFieldName(FieldName fieldName) {
+    public RouterLink withFieldName(FieldName fieldName) {
         routingField = Objects.requireNonNull(fieldName);
         return this;
     }
 
-    public Router withRoute(Regex regex, ChainLink next) {
+    public RouterLink withRoute(Regex regex, ChainLink next) {
         routes.add(new Route(regex, next));
+        return this;
+    }
+
+    public RouterLink withDefault(ChainLink defaultNext) {
+        this.defaultRoute = Optional.of(defaultNext);
         return this;
     }
 
@@ -75,9 +82,7 @@ public class Router implements ChainLink {
             }
         }
 
-        // TODO define a "default" route. if no match and no default route, then error
-        // TODO log debug no routes match, nothing to do
-
-        return Optional.empty();
+        // no routes matched, use the default next link if one is present
+        return defaultRoute;
     }
 }

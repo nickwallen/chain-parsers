@@ -6,10 +6,13 @@ import com.cloudera.ccp.chains.parsers.Regex;
 
 import java.util.Objects;
 
+/**
+ * Simplifies the construction of a parser chain.
+ */
 public class ChainBuilder {
     private ChainLink head;
     private SimpleChainLink lastLink;
-    private Router router;
+    private RouterLink router;
 
     /**
      * Returns the head of the chain.
@@ -21,13 +24,13 @@ public class ChainBuilder {
 
     public ChainBuilder routeBy(FieldName routeBy) {
         // create the router
-        router = new Router().withFieldName(routeBy);
+        router = new RouterLink().withFieldName(routeBy);
         if(head == null) {
             // this is a new chain starting with a router
             this.head = router;
         } else {
             // add router to the existing chain
-            lastLink.setNext(router);
+            lastLink.withNext(router);
         }
         return this;
     }
@@ -55,16 +58,16 @@ public class ChainBuilder {
         return then(new SimpleChainLink(parser));
     }
 
-    public ChainBuilder then(SimpleChainLink link) {
+    public ChainBuilder then(SimpleChainLink nextLink) {
         if(head == null) {
             // this is a new chain
-            this.head = link;
-            this.lastLink = link;
+            this.head = nextLink;
+            this.lastLink = nextLink;
 
         } else {
             // add link to the existing chain
-            lastLink.setNext(link);
-            lastLink = link;
+            lastLink.withNext(nextLink);
+            lastLink = nextLink;
         }
 
         return this;
