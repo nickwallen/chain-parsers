@@ -18,7 +18,40 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ParserChainRunnerTest {
 
     @Test
-    void runChain() {
+    void runOneLinkChain() {
+        long now = System.currentTimeMillis();
+        TimestampParser timestamp1 = new TimestampParser()
+                .withClock(new TimestampParserTest.FixedClock(now))
+                .withFieldName(FieldName.of("timestamp1"));
+
+        // the parser chain: timestamp1
+        ChainLink chain = new ChainBuilder()
+                .then(timestamp1)
+                .head();
+
+        // run the parser chain
+        Message input = Message.builder()
+                .addField(FieldName.of("original_string"), FieldValue.of("some message"))
+                .build();
+        ParserChainRunner runner = new ParserChainRunner();
+        List<Message> results = runner.run(input, chain);
+
+        // the first message returned should include only the original input
+        Message expected1 = Message.builder()
+                .withFields(input)
+                .build();
+        assertEquals(expected1, results.get(0));
+
+        // the second message should contain 'timestamp1'
+        Message expected2 = Message.builder()
+                .withFields(expected1)
+                .addField(FieldName.of("timestamp1"), FieldValue.of(Long.toString(now)))
+                .build();
+        assertEquals(expected2, results.get(1));
+    }
+
+    @Test
+    void runTwoLinkChain() {
         long now = System.currentTimeMillis();
         TimestampParser timestamp1 = new TimestampParser()
                 .withClock(new TimestampParserTest.FixedClock(now))
