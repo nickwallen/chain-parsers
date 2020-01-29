@@ -1,5 +1,7 @@
 package com.cloudera.ccp.chains.parsers.core;
 
+import com.cloudera.ccp.chains.parsers.ConfigName;
+import com.cloudera.ccp.chains.parsers.ConfigValues;
 import com.cloudera.ccp.chains.parsers.FieldName;
 import com.cloudera.ccp.chains.parsers.FieldValue;
 import com.cloudera.ccp.chains.parsers.Message;
@@ -42,6 +44,17 @@ public class TimestampParser implements Parser {
     @Override
     public List<FieldName> outputFields() {
         return Arrays.asList(timestampFieldName);
+    }
+
+    @Override
+    public List<ConfigName> validConfigurations() {
+        // TODO implement me
+        return null;
+    }
+
+    @Override
+    public void configure(ConfigName configName, ConfigValues configValues) {
+
     }
 
     /**

@@ -1,6 +1,5 @@
 package com.cloudera.ccp.chains.parsers;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -8,7 +7,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * The name of a field contained within a {@link Message}.
  */
 public class FieldName {
-    private static final String VALID_FIELD_NAME_REGEX = "[\\w\\d-_. ]+";
+    private static final Regex validFieldName = Regex.of("[\\w\\d-_. ]+");
     private final String fieldName;
 
     public static final FieldName of(String fieldName) {
@@ -19,7 +18,7 @@ public class FieldName {
      * Use {@link FieldName#of(String)}.
      */
     private FieldName(String fieldName) {
-        if(StringUtils.isBlank(fieldName) || !fieldName.matches(VALID_FIELD_NAME_REGEX)) {
+        if(!validFieldName.matches(fieldName)) {
             throw new IllegalArgumentException(String.format("Invalid field name: '%s'", fieldName));
         }
         this.fieldName = fieldName;

@@ -3,13 +3,11 @@ package com.cloudera.ccp.chains.parsers;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.Objects;
-
 /**
  * The value of a field contained within a {@link Message}.
  */
 public class FieldValue {
-    // TODO does this need to be bytes?
+    private static final Regex validFieldValue = Regex.of(".*");
     private final String value;
 
     public static FieldValue of(String fieldValue) {
@@ -17,10 +15,13 @@ public class FieldValue {
     }
 
     /**
-     * Use {@link FieldValue#of(String)}.
+     * Instead use {@link FieldValue#of(String)}.
      */
     private FieldValue(String value) {
-        this.value = Objects.requireNonNull(value);
+        if(!validFieldValue.matches(value)) {
+            throw new IllegalArgumentException(String.format("Invalid field value: '%s'", value));
+        }
+        this.value = value;
     }
 
     @Override

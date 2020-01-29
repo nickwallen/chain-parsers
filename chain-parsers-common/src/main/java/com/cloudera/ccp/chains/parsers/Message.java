@@ -118,6 +118,7 @@ public class Message {
         return "Message{" +
                 "fields=" + fields +
                 ", error=" + error +
+
                 '}';
     }
 }

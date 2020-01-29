@@ -1,5 +1,8 @@
 package com.cloudera.ccp.chains.parsers.core;
 
+import com.cloudera.ccp.chains.parsers.ConfigName;
+import com.cloudera.ccp.chains.parsers.ConfigValue;
+import com.cloudera.ccp.chains.parsers.ConfigValues;
 import com.cloudera.ccp.chains.parsers.FieldName;
 import com.cloudera.ccp.chains.parsers.FieldValue;
 import com.cloudera.ccp.chains.parsers.Message;
@@ -7,10 +10,11 @@ import com.cloudera.ccp.chains.parsers.Parser;
 import com.cloudera.ccp.chains.parsers.Regex;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -22,15 +26,20 @@ public class CSVParser implements Parser {
     /**
      * Defines an output field that is created by the parser.
      */
-    private static class OutputField {
-        private FieldName fieldName;
-        private int index;
+    static class OutputField {
+        FieldName fieldName;
+        int index;
 
-        public OutputField(FieldName fieldName, int index) {
+        OutputField(FieldName fieldName, int index) {
             this.fieldName = Objects.requireNonNull(fieldName);
             this.index = index;
         }
     }
+
+    public static final ConfigName inputConfig = ConfigName.of("input", true);
+    public static final ConfigName outputConfig = ConfigName.of("output", true);
+    public static final ConfigName delimiterConfig = ConfigName.of("delimiter", false);
+    public static final ConfigName trimConfig = ConfigName.of("trim", false);
 
     private FieldName inputField;
     private Regex delimiter;
@@ -51,12 +60,20 @@ public class CSVParser implements Parser {
         return this;
     }
 
+    public FieldName getInputField() {
+        return inputField;
+    }
+
     /**
      * @param delimiter A character or regular expression defining the delimiter used to split the text.
      */
     public CSVParser withDelimiter(Regex delimiter) {
         this.delimiter = Objects.requireNonNull(delimiter);
         return this;
+    }
+
+    public Regex getDelimiter() {
+        return delimiter;
     }
 
     /**
@@ -68,12 +85,25 @@ public class CSVParser implements Parser {
         return this;
     }
 
+    public List<OutputField> getOutputFields() {
+        return outputFields;
+    }
+
     /**
      * @param trimWhitespace True, if whitespace should be trimmed from each value. Otherwise, false.
      */
     public CSVParser trimWhitespace(boolean trimWhitespace) {
         this.trimWhitespace = trimWhitespace;
         return this;
+    }
+
+    public boolean isTrimWhitespace() {
+        return trimWhitespace;
+    }
+
+    @Override
+    public List<ConfigName> validConfigurations() {
+        return Arrays.asList(inputConfig, outputConfig, delimiterConfig, trimConfig);
     }
 
     @Override
@@ -85,7 +115,7 @@ public class CSVParser implements Parser {
         if(fieldValue.isPresent()) {
             doParse(fieldValue.get().toString(), output);
         } else {
-            output.withError(format("Missing the input field '%s'", inputField.toString()));
+            output.withError(format("Input field has not been defined"));
         }
 
         return output.build();
@@ -112,6 +142,74 @@ public class CSVParser implements Parser {
 
     @Override
     public List<FieldName> outputFields() {
-        return Collections.emptyList();
+        return outputFields
+                .stream()
+                .map(outputField -> outputField.fieldName)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void configure(ConfigName configName, ConfigValues configValues) {
+        if(inputConfig.equals(configName)) {
+            configureInput(configValues);
+
+        } else if(outputConfig.equals(configName)) {
+            configureOutput(configValues);
+
+        } else if(delimiterConfig.equals(configName)) {
+            configureDelimiter(configValues);
+
+        } else if(trimConfig.equals(configName)) {
+            configureTrim(configValues);
+        }
+    }
+
+    private void configureTrim(ConfigValues configValues) {
+        // set the whitespace trim
+        requireN(configValues, trimConfig.getName(), 1);
+        ConfigValue value1 = configValues.values().get(0);
+        trimWhitespace(Boolean.valueOf(value1.getValue()));
+    }
+
+    private void configureDelimiter(ConfigValues configValues) {
+        // set the delimiter
+        requireN(configValues, delimiterConfig.getName(), 1);
+        ConfigValue value1 = configValues.values().get(0);
+        withDelimiter(Regex.of(value1.getValue()));
+    }
+
+    private void configureInput(ConfigValues configValues) {
+        requireN(configValues, inputConfig.getName(), 1);
+        ConfigValue value1 = configValues.values().get(0);
+        withInputField(FieldName.of(value1.getValue()));
+    }
+
+    private void configureOutput(ConfigValues configValues) {
+        requireN(configValues, outputConfig.getName(), 2);
+
+        int index = -1;
+        FieldName outputField = null;
+        for(ConfigValue value: configValues.values()) {
+            if("label".equals(value.getKey())) {
+                outputField = FieldName.of(value.getValue());
+            } else if("index".equals(value.getKey())) {
+                index = Integer.parseInt(value.getValue());
+            } else {
+                throw new IllegalArgumentException("TODO");
+            }
+        }
+
+        if(outputField != null && index != -1) {
+            withOutputField(outputField, index);
+        } else {
+            throw new IllegalArgumentException("TODO");
+        }
+    }
+
+    private void requireN(ConfigValues configValues, String name, int count) {
+        if(configValues.size() != count) {
+            String msg = "For '%s' expected %d value(s), but got %d; ";
+            throw new IllegalArgumentException(String.format(msg, name, count, configValues.size()));
+        }
     }
 }

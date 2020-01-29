@@ -17,6 +17,9 @@ public final class Regex {
         return new Regex(regex);
     }
 
+    /**
+     * Instead use {@link Regex#of(String)}.
+     */
     private Regex(String regex) {
         this.regex = Objects.requireNonNull(regex);
         this.pattern = Pattern.compile(regex);
@@ -28,7 +31,28 @@ public final class Regex {
      * @return True if the field value matches the regular expression. Otherwise, false.
      */
     public boolean matches(FieldValue fieldValue) {
-        return pattern.matcher(fieldValue.toString()).matches();
+        return matches(fieldValue.toString());
+    }
+
+    /**
+     * Tells whether a field name matches this regular expression.
+     * @param fieldName The value to match.
+     * @return True if the field value matches the regular expression. Otherwise, false.
+     */
+    public boolean matches(FieldName fieldName) {
+        return matches(fieldName.toString());
+    }
+
+    /**
+     * Tells whether a string matches this regular expression.
+     * @param value The value to match
+     * @return True if the value matches the regular expression. Otherwise, false.
+     */
+    public boolean matches(String value) {
+        if(value == null) {
+            return false;
+        }
+        return pattern.matcher(value).matches();
     }
 
     @Override
@@ -47,7 +71,6 @@ public final class Regex {
         Regex that = (Regex) o;
         return new EqualsBuilder()
                 .append(regex, that.regex)
-                .append(pattern, that.pattern)
                 .isEquals();
     }
 
@@ -55,7 +78,6 @@ public final class Regex {
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .append(regex)
-                .append(pattern)
                 .toHashCode();
     }
 }
