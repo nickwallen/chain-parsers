@@ -22,7 +22,7 @@ public class ParserChainRunnerTest {
         long now = System.currentTimeMillis();
         TimestampParser timestamp1 = new TimestampParser()
                 .withClock(new TimestampParserTest.FixedClock(now))
-                .withFieldName(FieldName.of("timestamp1"));
+                .withOutputField(FieldName.of("timestamp1"));
 
         // the parser chain: timestamp1
         ChainLink chain = new ChainBuilder()
@@ -55,11 +55,11 @@ public class ParserChainRunnerTest {
         long now = System.currentTimeMillis();
         TimestampParser timestamp1 = new TimestampParser()
                 .withClock(new TimestampParserTest.FixedClock(now))
-                .withFieldName(FieldName.of("timestamp1"));
+                .withOutputField(FieldName.of("timestamp1"));
 
         TimestampParser timestamp2 = new TimestampParser()
                 .withClock(new TimestampParserTest.FixedClock(now))
-                .withFieldName(FieldName.of("timestamp2"));
+                .withOutputField(FieldName.of("timestamp2"));
 
         // the parser chain: timestamp1 -> timestamp2
         ChainLink chain = new ChainBuilder()
@@ -100,7 +100,7 @@ public class ParserChainRunnerTest {
         long now = System.currentTimeMillis();
         TimestampParser timestamp1 = new TimestampParser()
                 .withClock(new TimestampParserTest.FixedClock(now))
-                .withFieldName(FieldName.of("timestamp1"));
+                .withOutputField(FieldName.of("timestamp1"));
 
         // the parser chain: timestamp1 -> timestamp2
         ChainLink chain = new ChainBuilder()

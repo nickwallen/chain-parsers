@@ -2,7 +2,6 @@ package com.cloudera.ccp.chains.parsers.core;
 
 import com.cloudera.ccp.chains.parsers.ConfigName;
 import com.cloudera.ccp.chains.parsers.ConfigValue;
-import com.cloudera.ccp.chains.parsers.ConfigValues;
 import com.cloudera.ccp.chains.parsers.FieldName;
 import com.cloudera.ccp.chains.parsers.FieldValue;
 import com.cloudera.ccp.chains.parsers.Message;
@@ -149,7 +148,7 @@ public class CSVParser implements Parser {
     }
 
     @Override
-    public void configure(ConfigName configName, ConfigValues configValues) {
+    public void configure(ConfigName configName, List<ConfigValue> configValues) {
         if(inputConfig.equals(configName)) {
             configureInput(configValues);
 
@@ -164,52 +163,53 @@ public class CSVParser implements Parser {
         }
     }
 
-    private void configureTrim(ConfigValues configValues) {
+    private void configureTrim(List<ConfigValue> configValues) {
         // set the whitespace trim
-        requireN(configValues, trimConfig.getName(), 1);
-        ConfigValue value1 = configValues.values().get(0);
+        requireN(trimConfig, configValues, 1);
+        ConfigValue value1 = configValues.get(0);
         trimWhitespace(Boolean.valueOf(value1.getValue()));
     }
 
-    private void configureDelimiter(ConfigValues configValues) {
+    private void configureDelimiter(List<ConfigValue> configValues) {
         // set the delimiter
-        requireN(configValues, delimiterConfig.getName(), 1);
-        ConfigValue value1 = configValues.values().get(0);
+        requireN(delimiterConfig, configValues, 1);
+        ConfigValue value1 = configValues.get(0);
         withDelimiter(Regex.of(value1.getValue()));
     }
 
-    private void configureInput(ConfigValues configValues) {
-        requireN(configValues, inputConfig.getName(), 1);
-        ConfigValue value1 = configValues.values().get(0);
+    private void configureInput(List<ConfigValue> configValues) {
+        requireN(inputConfig, configValues, 1);
+        ConfigValue value1 = configValues.get(0);
         withInputField(FieldName.of(value1.getValue()));
     }
 
-    private void configureOutput(ConfigValues configValues) {
-        requireN(configValues, outputConfig.getName(), 2);
+    private void configureOutput(List<ConfigValue> configValues) {
+        requireN(outputConfig, configValues, 2);
 
         int index = -1;
         FieldName outputField = null;
-        for(ConfigValue value: configValues.values()) {
+        for(ConfigValue value: configValues) {
             if("label".equals(value.getKey())) {
                 outputField = FieldName.of(value.getValue());
             } else if("index".equals(value.getKey())) {
                 index = Integer.parseInt(value.getValue());
             } else {
-                throw new IllegalArgumentException("TODO");
+                throw new IllegalArgumentException(String.format("Unexpected config key: %s", value.getKey()));
             }
         }
 
         if(outputField != null && index != -1) {
             withOutputField(outputField, index);
         } else {
-            throw new IllegalArgumentException("TODO");
+            throw new IllegalArgumentException(String.format("For '%s' expected a value for both 'label' and 'index'",
+                    outputConfig.getName()));
         }
     }
 
-    private void requireN(ConfigValues configValues, String name, int count) {
+    private void requireN(ConfigName configName, List<ConfigValue> configValues, int count) {
         if(configValues.size() != count) {
             String msg = "For '%s' expected %d value(s), but got %d; ";
-            throw new IllegalArgumentException(String.format(msg, name, count, configValues.size()));
+            throw new IllegalArgumentException(String.format(msg, configName.getName(), count, configValues.size()));
         }
     }
 }

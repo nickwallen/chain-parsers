@@ -52,7 +52,7 @@ public class ParserChainRunner {
 
         // timestamps the message with 'processing_time'
         TimestampParser timestampParser = new TimestampParser()
-                .withFieldName(timestampField);
+                .withOutputField(timestampField);
 
         // CSV -> Router -> Timestamp
         ChainLink chain = new ChainBuilder()

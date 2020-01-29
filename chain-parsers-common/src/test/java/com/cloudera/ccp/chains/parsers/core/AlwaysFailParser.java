@@ -1,7 +1,7 @@
 package com.cloudera.ccp.chains.parsers.core;
 
 import com.cloudera.ccp.chains.parsers.ConfigName;
-import com.cloudera.ccp.chains.parsers.ConfigValues;
+import com.cloudera.ccp.chains.parsers.ConfigValue;
 import com.cloudera.ccp.chains.parsers.FieldName;
 import com.cloudera.ccp.chains.parsers.Message;
 import com.cloudera.ccp.chains.parsers.Parser;
@@ -28,12 +28,11 @@ public class AlwaysFailParser implements Parser {
 
     @Override
     public List<ConfigName> validConfigurations() {
-        // TODO implement me
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
-    public void configure(ConfigName configName, ConfigValues configValues) {
-        // TODO implement me
+    public void configure(ConfigName configName, List<ConfigValue> configValues) {
+        // nothing to do
     }
 }

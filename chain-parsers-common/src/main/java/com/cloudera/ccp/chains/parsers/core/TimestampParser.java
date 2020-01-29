@@ -1,7 +1,7 @@
 package com.cloudera.ccp.chains.parsers.core;
 
 import com.cloudera.ccp.chains.parsers.ConfigName;
-import com.cloudera.ccp.chains.parsers.ConfigValues;
+import com.cloudera.ccp.chains.parsers.ConfigValue;
 import com.cloudera.ccp.chains.parsers.FieldName;
 import com.cloudera.ccp.chains.parsers.FieldValue;
 import com.cloudera.ccp.chains.parsers.Message;
@@ -23,11 +23,13 @@ public class TimestampParser implements Parser {
         }
     }
 
-    private FieldName timestampFieldName;
+    public static final ConfigName outputFieldConfig = ConfigName.of("timestampField", false);
+
+    private FieldName outputField;
     private Clock clock;
 
     public TimestampParser() {
-        this.timestampFieldName = FieldName.of("timestamp");
+        this.outputField = FieldName.of("timestamp");
         this.clock = new Clock();
     }
 
@@ -37,31 +39,34 @@ public class TimestampParser implements Parser {
         FieldValue timestamp = FieldValue.of(Long.toString(now));
         return Message.builder()
                 .withFields(input)
-                .addField(timestampFieldName, timestamp)
+                .addField(outputField, timestamp)
                 .build();
     }
 
     @Override
     public List<FieldName> outputFields() {
-        return Arrays.asList(timestampFieldName);
+        return Arrays.asList(outputField);
     }
 
     @Override
     public List<ConfigName> validConfigurations() {
-        // TODO implement me
-        return null;
+        return Arrays.asList(outputFieldConfig);
     }
 
     @Override
-    public void configure(ConfigName configName, ConfigValues configValues) {
-
+    public void configure(ConfigName configName, List<ConfigValue> configValues) {
+        if(outputFieldConfig.equals(configName)) {
+            requireN(outputFieldConfig, configValues, 1);
+            FieldName fieldName = FieldName.of(configValues.get(0).getValue());
+            withOutputField(fieldName);
+        }
     }
 
     /**
      * @param fieldName The name of the field added to each message.
      */
-    public TimestampParser withFieldName(FieldName fieldName) {
-        this.timestampFieldName = Objects.requireNonNull(fieldName);
+    public TimestampParser withOutputField(FieldName fieldName) {
+        this.outputField = Objects.requireNonNull(fieldName);
         return this;
     }
 
@@ -73,7 +78,14 @@ public class TimestampParser implements Parser {
         return this;
     }
 
-    public FieldName getTimestampFieldName() {
-        return timestampFieldName;
+    public FieldName getOutputField() {
+        return outputField;
+    }
+
+    private void requireN(ConfigName configName, List<ConfigValue> configValues, int count) {
+        if(configValues.size() != count) {
+            String msg = "For '%s' expected %d value(s), but got %d; ";
+            throw new IllegalArgumentException(String.format(msg, configName.getName(), count, configValues.size()));
+        }
     }
 }

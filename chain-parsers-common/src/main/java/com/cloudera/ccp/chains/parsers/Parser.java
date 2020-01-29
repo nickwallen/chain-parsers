@@ -15,7 +15,10 @@ public interface Parser {
     Message parse(Message message);
 
     /**
-     * Returns the known output fields added to all parsed messages.
+     * Returns the known output fields added to all parsed messages.  Not all parsers
+     * are able to declare their known output fields.
+     *
+     * TODO should this just be removed?  The user will know the output fields when a message is parsed.
      */
     List<FieldName> outputFields();
 
@@ -31,5 +34,5 @@ public interface Parser {
      * @param configName The name of the configuration.
      * @param configValues The value(s) of the configuration element.
      */
-    void configure(ConfigName configName, ConfigValues configValues);
+    void configure(ConfigName configName, List<ConfigValue> configValues);
 }

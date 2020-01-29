@@ -1,9 +1,12 @@
 package com.cloudera.ccp.chains.parsers.core;
 
+import com.cloudera.ccp.chains.parsers.ConfigValue;
 import com.cloudera.ccp.chains.parsers.FieldName;
 import com.cloudera.ccp.chains.parsers.FieldValue;
 import com.cloudera.ccp.chains.parsers.Message;
 import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -33,7 +36,7 @@ public class TimestampParserTest {
         FieldName timestampField = FieldName.of("processing_timestamp");
         Message output = new TimestampParser()
                 .withClock(new FixedClock(time))
-                .withFieldName(timestampField)
+                .withOutputField(timestampField)
                 .parse(input);
 
         // expect a new timestamp field to have been added
@@ -53,12 +56,13 @@ public class TimestampParserTest {
                 .addField(FieldName.of("field1"), FieldValue.of("value1"))
                 .build();
 
-        TimestampParser parser = new TimestampParser()
-                .withClock(new FixedClock(time));
-        Message output = parser.parse(input);
+        TimestampParser parser = new TimestampParser();
+        Message output = parser
+                .withClock(new FixedClock(time))
+                .parse(input);
 
         // expect a new timestamp field to have been added using the default name
-        FieldName defaultFieldName = parser.getTimestampFieldName();
+        FieldName defaultFieldName = parser.getOutputField();
         assertEquals(FieldValue.of(Long.toString(time)), output.getField(defaultFieldName).get());
 
         // expect the same input fields on the output side
@@ -66,5 +70,12 @@ public class TimestampParserTest {
 
         // no errors
         assertFalse(output.getError().isPresent());
+    }
+
+    @Test
+    void configureTimestampField() {
+        TimestampParser parser = new TimestampParser();
+        parser.configure(TimestampParser.outputFieldConfig, Arrays.asList(ConfigValue.of("processing_time")));
+        assertEquals(FieldName.of("processing_time"), parser.getOutputField());
     }
 }

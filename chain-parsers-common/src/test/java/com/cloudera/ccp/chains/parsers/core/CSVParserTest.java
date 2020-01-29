@@ -1,13 +1,13 @@
 package com.cloudera.ccp.chains.parsers.core;
 
 import com.cloudera.ccp.chains.parsers.ConfigValue;
-import com.cloudera.ccp.chains.parsers.ConfigValues;
 import com.cloudera.ccp.chains.parsers.FieldName;
 import com.cloudera.ccp.chains.parsers.FieldValue;
 import com.cloudera.ccp.chains.parsers.Message;
 import com.cloudera.ccp.chains.parsers.Regex;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -192,16 +192,16 @@ public class CSVParserTest {
     @Test
     void configureInputField() {
         CSVParser parser = new CSVParser();
-        parser.configure(CSVParser.inputConfig, ConfigValues.of(ConfigValue.of("input", "original_string")));
+        parser.configure(CSVParser.inputConfig, Arrays.asList(ConfigValue.of("original_string")));
         assertEquals(FieldName.of("original_string"), parser.getInputField());
     }
 
     @Test
     void configureOutputFields() {
         CSVParser parser = new CSVParser();
-        parser.configure(CSVParser.outputConfig, ConfigValues.of(ConfigValue.of("label", "first"), ConfigValue.of("index", "0")));
-        parser.configure(CSVParser.outputConfig, ConfigValues.of(ConfigValue.of("label", "second"), ConfigValue.of("index", "1")));
-        parser.configure(CSVParser.outputConfig, ConfigValues.of(ConfigValue.of("label", "third"), ConfigValue.of("index", "2")));
+        parser.configure(CSVParser.outputConfig, Arrays.asList(ConfigValue.of("label", "first"), ConfigValue.of("index", "0")));
+        parser.configure(CSVParser.outputConfig, Arrays.asList(ConfigValue.of("label", "second"), ConfigValue.of("index", "1")));
+        parser.configure(CSVParser.outputConfig, Arrays.asList(ConfigValue.of("label", "third"), ConfigValue.of("index", "2")));
 
         List<CSVParser.OutputField> outputFields = parser.getOutputFields();
         assertEquals(3, outputFields.size());
@@ -222,14 +222,14 @@ public class CSVParserTest {
     @Test
     void configureDelimiter() {
         CSVParser parser = new CSVParser();
-        parser.configure(CSVParser.delimiterConfig, ConfigValues.of(ConfigValue.of("delimiter", "|")));
+        parser.configure(CSVParser.delimiterConfig, Arrays.asList(ConfigValue.of("|")));
         assertEquals(Regex.of("|"), parser.getDelimiter());
     }
 
     @Test
     void configureTrim() {
         CSVParser parser = new CSVParser();
-        parser.configure(CSVParser.trimConfig, ConfigValues.of(ConfigValue.of("trim", "false")));
+        parser.configure(CSVParser.trimConfig, Arrays.asList(ConfigValue.of("false")));
         assertFalse(parser.isTrimWhitespace());
     }
 }
