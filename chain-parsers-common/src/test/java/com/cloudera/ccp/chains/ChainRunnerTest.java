@@ -4,130 +4,102 @@ import com.cloudera.ccp.chains.links.ChainLink;
 import com.cloudera.ccp.chains.parsers.FieldName;
 import com.cloudera.ccp.chains.parsers.FieldValue;
 import com.cloudera.ccp.chains.parsers.Message;
+import com.cloudera.ccp.chains.parsers.Parser;
 import com.cloudera.ccp.chains.parsers.core.AlwaysFailParser;
 import com.cloudera.ccp.chains.parsers.core.TimestampParser;
 import com.cloudera.ccp.chains.parsers.core.TimestampParserTest;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import static org.mockito.Mockito.*;
+
 public class ChainRunnerTest {
 
     @Test
-    void runOneLinkChain() {
-        long now = System.currentTimeMillis();
-        TimestampParser timestamp1 = new TimestampParser()
-                .withClock(new TimestampParserTest.FixedClock(now))
-                .withOutputField(FieldName.of("timestamp1"));
+    void runChain() {
+        Message goodMessage = Message.builder().build();
 
-        // the parser chain: timestamp1
+        Parser parser1 = Mockito.mock(Parser.class);
+        when(parser1.parse(Mockito.any(Message.class)))
+                .thenReturn(goodMessage);
+
+        Parser parser2 = Mockito.mock(Parser.class);
+        when(parser2.parse(Mockito.any(Message.class)))
+                .thenReturn(goodMessage);
+
         ChainLink chain = new ChainBuilder()
-                .then(timestamp1)
+                .then(parser1)
+                .then(parser2)
                 .head();
 
         // run the parser chain
-        Message input = Message.builder()
-                .addField(FieldName.of("original_string"), FieldValue.of("some message"))
-                .build();
         ChainRunner runner = new ChainRunner();
-        List<Message> results = runner.run(input, chain);
+        List<Message> results = runner.run(goodMessage, chain);
 
-        // the first message returned should include only the original input
-        Message expected1 = Message.builder()
-                .withFields(input)
-                .build();
-        assertEquals(expected1, results.get(0));
-
-        // the second message should contain 'timestamp1'
-        Message expected2 = Message.builder()
-                .withFields(expected1)
-                .addField(FieldName.of("timestamp1"), FieldValue.of(Long.toString(now)))
-                .build();
-        assertEquals(expected2, results.get(1));
+        // 1 original input + 1 from parser1 + 1 from parser2 = 3
+        assertEquals(3, results.size());
+        verify(parser1, times(1)).parse(eq(goodMessage));
+        verify(parser2, times(1)).parse(eq(goodMessage));
     }
 
     @Test
-    void runTwoLinkChain() {
-        long now = System.currentTimeMillis();
-        TimestampParser timestamp1 = new TimestampParser()
-                .withClock(new TimestampParserTest.FixedClock(now))
-                .withOutputField(FieldName.of("timestamp1"));
+    void runOne() {
+        Message goodMessage = Message.builder().build();
 
-        TimestampParser timestamp2 = new TimestampParser()
-                .withClock(new TimestampParserTest.FixedClock(now))
-                .withOutputField(FieldName.of("timestamp2"));
+        Parser parser1 = Mockito.mock(Parser.class);
+        when(parser1.parse(Mockito.any(Message.class)))
+                .thenReturn(goodMessage);
 
-        // the parser chain: timestamp1 -> timestamp2
         ChainLink chain = new ChainBuilder()
-                .then(timestamp1)
-                .then(timestamp2)
+                .then(parser1)
                 .head();
 
         // run the parser chain
-        Message input = Message.builder()
-                .addField(FieldName.of("original_string"), FieldValue.of("some message"))
-                .build();
         ChainRunner runner = new ChainRunner();
-        List<Message> results = runner.run(input, chain);
+        List<Message> results = runner.run(goodMessage, chain);
 
-        // the first message returned should include only the original input
-        Message expected1 = Message.builder()
-                .withFields(input)
-                .build();
-        assertEquals(expected1, results.get(0));
-
-        // the second message should contain 'timestamp1'
-        Message expected2 = Message.builder()
-                .withFields(expected1)
-                .addField(FieldName.of("timestamp1"), FieldValue.of(Long.toString(now)))
-                .build();
-        assertEquals(expected2, results.get(1));
-
-        // the third message should also contain 'timestamp2'
-        Message expected3 = Message.builder()
-                .withFields(expected2)
-                .addField(FieldName.of("timestamp2"), FieldValue.of(Long.toString(now)))
-                .build();
-        assertEquals(expected3, results.get(2));
+        // 1 original input + 1 from parser1 = 2
+        assertEquals(2, results.size());
+        verify(parser1, times(1)).parse(eq(goodMessage));
     }
 
     @Test
     void runChainWithError() {
-        long now = System.currentTimeMillis();
-        TimestampParser timestamp1 = new TimestampParser()
-                .withClock(new TimestampParserTest.FixedClock(now))
-                .withOutputField(FieldName.of("timestamp1"));
+        Message goodMessage = Message.builder().build();
+        Message errorMessage = Message.builder().withError("error").build();
 
-        // the parser chain: timestamp1 -> timestamp2
+        Parser parser1 = Mockito.mock(Parser.class);
+        when(parser1.parse(Mockito.any(Message.class)))
+                .thenReturn(goodMessage);
+
+        Parser parser2 = Mockito.mock(Parser.class);
+        when(parser2.parse(Mockito.any(Message.class)))
+                .thenReturn(errorMessage);
+
+        Parser parser3 = Mockito.mock(Parser.class);
+        when(parser3.parse(Mockito.any(Message.class)))
+                .thenReturn(goodMessage);
+
         ChainLink chain = new ChainBuilder()
-                .then(timestamp1)
-                .then(new AlwaysFailParser())
+                .then(parser1)
+                .then(parser2)
+                .then(parser3)
                 .head();
 
         // run the parser chain
-        Message input = Message.builder()
-                .addField(FieldName.of("original_string"), FieldValue.of("some message"))
-                .build();
         ChainRunner runner = new ChainRunner();
-        List<Message> results = runner.run(input, chain);
+        List<Message> results = runner.run(goodMessage, chain);
 
-        // the first message returned should include only the original input
-        Message expected1 = Message.builder()
-                .withFields(input)
-                .build();
-        assertEquals(expected1, results.get(0));
+        verify(parser1, times(1)).parse(eq(goodMessage));
+        verify(parser2, times(1)).parse(eq(goodMessage));
+        verify(parser3, never()).parse(any());
 
-        // the second message should contain 'timestamp1'
-        Message expected2 = Message.builder()
-                .withFields(expected1)
-                .addField(FieldName.of("timestamp1"), FieldValue.of(Long.toString(now)))
-                .build();
-        assertEquals(expected2, results.get(1));
-
-        // the last parser in the chain caused an error
-        assertTrue(results.get(2).getError().isPresent());
+        // 1 original message, good message from parser1, error message from parser2, parser3 not executed
+        assertEquals(3, results.size());
     }
 }

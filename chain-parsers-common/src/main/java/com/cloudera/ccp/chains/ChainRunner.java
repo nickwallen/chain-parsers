@@ -26,16 +26,23 @@ public class ChainRunner {
         List<Message> results = new ArrayList<>();
         results.add(message);
 
-        Optional<ChainLink> next = Optional.of(chain);
+        Optional<ChainLink> nextLink = Optional.of(chain);
         do {
+            // parse the message
             Message input = results.get(results.size()-1);
-            Parser parser = next.get().getParser();
+            Parser parser = nextLink.get().getParser();
             Message output = parser.parse(input);
             results.add(output);
-            next = next.get().getNext(output);
-            logger.debug("Parsed message; parser={}, message={}", parser.getClass().getName(), message);
 
-        } while(next.isPresent());
+            // get the next link in the chain
+            nextLink = nextLink.get().getNext(output);
+
+            // if there is an error, stop parsing the message
+            if(output.getError().isPresent()) {
+                break;
+            }
+
+        } while(nextLink.isPresent());
 
         return results;
     }
