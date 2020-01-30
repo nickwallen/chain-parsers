@@ -24,7 +24,7 @@ public class ChainBuilder {
 
     public ChainBuilder routeBy(FieldName routeBy) {
         // create the router
-        router = new RouterLink().withFieldName(routeBy);
+        router = new RouterLink().withInputField(routeBy);
         if(head == null) {
             // this is a new chain starting with a router
             this.head = router;

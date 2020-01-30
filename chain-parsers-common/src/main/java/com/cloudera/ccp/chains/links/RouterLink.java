@@ -1,11 +1,12 @@
 package com.cloudera.ccp.chains.links;
 
+import com.cloudera.ccp.chains.parsers.ConfigName;
 import com.cloudera.ccp.chains.parsers.FieldName;
 import com.cloudera.ccp.chains.parsers.FieldValue;
 import com.cloudera.ccp.chains.parsers.Message;
-import com.cloudera.ccp.chains.parsers.core.NoopParser;
 import com.cloudera.ccp.chains.parsers.Parser;
 import com.cloudera.ccp.chains.parsers.Regex;
+import com.cloudera.ccp.chains.parsers.core.NoopParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,7 @@ public class RouterLink implements ChainLink {
     /**
      * The name of the field whose value is used for routing.
      */
-    private FieldName routingField;
+    private FieldName inputField;
     private List<Route> routes;
     private Optional<ChainLink> defaultRoute;
 
@@ -43,9 +44,13 @@ public class RouterLink implements ChainLink {
         this.defaultRoute = Optional.empty();
     }
 
-    public RouterLink withFieldName(FieldName fieldName) {
-        routingField = Objects.requireNonNull(fieldName);
+    public RouterLink withInputField(FieldName fieldName) {
+        inputField = Objects.requireNonNull(fieldName);
         return this;
+    }
+
+    public FieldName getInputField() {
+        return inputField;
     }
 
     public RouterLink withRoute(Regex regex, ChainLink next) {
@@ -53,9 +58,17 @@ public class RouterLink implements ChainLink {
         return this;
     }
 
+    public List<Route> getRoutes() {
+        return routes;
+    }
+
     public RouterLink withDefault(ChainLink defaultNext) {
         this.defaultRoute = Optional.of(defaultNext);
         return this;
+    }
+
+    public Optional<ChainLink> getDefault() {
+        return defaultRoute;
     }
 
     @Override
@@ -66,11 +79,11 @@ public class RouterLink implements ChainLink {
 
     @Override
     public Optional<ChainLink> getNext(Message input) {
-        if(routingField == null) {
+        if(inputField == null) {
             throw new IllegalStateException("The routing field was not defined.");
         }
 
-        Optional<FieldValue> valueOpt = input.getField(routingField);
+        Optional<FieldValue> valueOpt = input.getField(inputField);
         if(valueOpt.isPresent()) {
             FieldValue fieldValue = valueOpt.get();
 

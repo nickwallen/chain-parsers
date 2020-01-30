@@ -1,11 +1,14 @@
 package com.cloudera.ccp.chains.links;
 
+import com.cloudera.ccp.chains.parsers.ConfigValue;
 import com.cloudera.ccp.chains.parsers.FieldName;
 import com.cloudera.ccp.chains.parsers.FieldValue;
 import com.cloudera.ccp.chains.parsers.Message;
 import com.cloudera.ccp.chains.parsers.Regex;
 import com.cloudera.ccp.chains.parsers.core.NoopParser;
 import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -22,7 +25,7 @@ public class RouterLinkTest {
 
         ChainLink expectedNext = new SimpleChainLink(new NoopParser());
         RouterLink routerLink = new RouterLink()
-                .withFieldName(FieldName.of("tag"))
+                .withInputField(FieldName.of("tag"))
                 .withRoute(Regex.of("match_[0-9]+"), expectedNext)
                 .withRoute(Regex.of("no_match"), new SimpleChainLink(new NoopParser()));
 
@@ -39,7 +42,7 @@ public class RouterLinkTest {
 
         ChainLink expectedNext = new SimpleChainLink(new NoopParser());
         RouterLink routerLink = new RouterLink()
-                .withFieldName(FieldName.of("tag"))
+                .withInputField(FieldName.of("tag"))
                 .withRoute(Regex.of("no_match"), expectedNext);
 
         assertFalse(routerLink.getNext(message).isPresent());
@@ -54,7 +57,7 @@ public class RouterLinkTest {
 
         ChainLink expectedNext = new SimpleChainLink(new NoopParser());
         RouterLink routerLink = new RouterLink()
-                .withFieldName(FieldName.of("tag"))
+                .withInputField(FieldName.of("tag"))
                 .withRoute(Regex.of("no_match"), new SimpleChainLink(new NoopParser()))
                 .withDefault(expectedNext);
 
