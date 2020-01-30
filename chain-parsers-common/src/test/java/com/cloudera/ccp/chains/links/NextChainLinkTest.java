@@ -8,20 +8,20 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class SimpleChainLinkTest {
+public class NextChainLinkTest {
     Message message = Message.builder().build();
 
     @Test
     void nextLink() {
-        SimpleChainLink next = new SimpleChainLink(new NoopParser());
-        SimpleChainLink previous = new SimpleChainLink(new NoopParser())
+        NextChainLink next = new NextChainLink(new NoopParser());
+        NextChainLink previous = new NextChainLink(new NoopParser())
                 .withNext(next);
         assertEquals(next, previous.getNext(message).get());
     }
 
     @Test
     void nextLinkEmpty() {
-        SimpleChainLink link = new SimpleChainLink(new NoopParser());
+        NextChainLink link = new NextChainLink(new NoopParser());
         // the next link is not present until set
         assertFalse(link.getNext(message).isPresent());
     }
@@ -29,7 +29,7 @@ public class SimpleChainLinkTest {
     @Test
     void getParser() {
         Parser parser = new NoopParser();
-        SimpleChainLink link = new SimpleChainLink(parser);
+        NextChainLink link = new NextChainLink(parser);
         assertEquals(parser, link.getParser());
     }
 }

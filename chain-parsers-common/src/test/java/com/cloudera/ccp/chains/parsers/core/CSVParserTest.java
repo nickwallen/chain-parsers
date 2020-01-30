@@ -14,6 +14,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+
 public class CSVParserTest {
 
     @Test
@@ -231,5 +234,16 @@ public class CSVParserTest {
         CSVParser parser = new CSVParser();
         parser.configure(CSVParser.trimConfig, Arrays.asList(ConfigValue.of("false")));
         assertFalse(parser.isTrimWhitespace());
+    }
+
+    @Test
+    void validConfigurations() {
+        CSVParser parser = new CSVParser();
+        assertThat(parser.validConfigurations(),
+                contains(
+                        CSVParser.inputConfig,
+                        CSVParser.outputConfig,
+                        CSVParser.delimiterConfig,
+                        CSVParser.trimConfig));
     }
 }

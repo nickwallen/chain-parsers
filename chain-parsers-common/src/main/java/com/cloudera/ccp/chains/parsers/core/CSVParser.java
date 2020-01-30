@@ -84,7 +84,7 @@ public class CSVParser implements Parser {
         return this;
     }
 
-    public List<OutputField> getOutputFields() {
+    List<OutputField> getOutputFields() {
         return outputFields;
     }
 

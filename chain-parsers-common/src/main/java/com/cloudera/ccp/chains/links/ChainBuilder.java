@@ -11,7 +11,7 @@ import java.util.Objects;
  */
 public class ChainBuilder {
     private ChainLink head;
-    private SimpleChainLink lastLink;
+    private NextChainLink lastLink;
     private RouterLink router;
 
     /**
@@ -47,7 +47,7 @@ public class ChainBuilder {
         if(router == null) {
             throw new IllegalStateException("Must call routeBy before creating a route");
         }
-        router.withRoute(regex, new SimpleChainLink(parser));
+        router.withRoute(regex, new NextChainLink(parser));
         return this;
     }
 
@@ -55,10 +55,10 @@ public class ChainBuilder {
         if(router != null) {
             throw new IllegalStateException("Cannot add another simple link after a router");
         }
-        return then(new SimpleChainLink(parser));
+        return then(new NextChainLink(parser));
     }
 
-    public ChainBuilder then(SimpleChainLink nextLink) {
+    public ChainBuilder then(NextChainLink nextLink) {
         if(head == null) {
             // this is a new chain
             this.head = nextLink;

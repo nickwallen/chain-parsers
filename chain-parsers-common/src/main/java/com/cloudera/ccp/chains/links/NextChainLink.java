@@ -8,11 +8,11 @@ import java.util.Optional;
 /**
  * A {@link ChainLink} that links directly to the next link in a chain.
  */
-public class SimpleChainLink implements ChainLink {
+public class NextChainLink implements ChainLink {
     private Parser parser;
     private Optional<ChainLink> next;
 
-    public SimpleChainLink(Parser parser) {
+    public NextChainLink(Parser parser) {
         this.parser = parser;
         this.next = Optional.empty();
     }
@@ -31,7 +31,7 @@ public class SimpleChainLink implements ChainLink {
         return next;
     }
 
-    public SimpleChainLink withNext(ChainLink next) {
+    public NextChainLink withNext(ChainLink next) {
         this.next = Optional.of(next);
         return this;
     }
