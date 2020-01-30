@@ -5,6 +5,7 @@ import com.cloudera.ccp.chains.parsers.ConfigValue;
 import com.cloudera.ccp.chains.parsers.FieldName;
 import com.cloudera.ccp.chains.parsers.FieldValue;
 import com.cloudera.ccp.chains.parsers.Message;
+import com.cloudera.ccp.chains.parsers.MessageParser;
 import com.cloudera.ccp.chains.parsers.Parser;
 import com.cloudera.ccp.chains.parsers.Regex;
 
@@ -20,6 +21,10 @@ import static java.lang.String.format;
 /**
  * Parses delimited text like CSV.
  */
+@MessageParser(
+        name="Delimited Text",
+        description="Parses delimited text like CSV."
+)
 public class DelimitedTextParser implements Parser {
 
     /**

@@ -4,6 +4,7 @@ import com.cloudera.ccp.chains.parsers.ConfigName;
 import com.cloudera.ccp.chains.parsers.ConfigValue;
 import com.cloudera.ccp.chains.parsers.FieldName;
 import com.cloudera.ccp.chains.parsers.Message;
+import com.cloudera.ccp.chains.parsers.MessageParser;
 import com.cloudera.ccp.chains.parsers.Parser;
 
 import java.util.Collections;
@@ -16,6 +17,10 @@ import java.util.Objects;
  * <p>This can be used with a {@link com.cloudera.ccp.chains.links.RouterLink}
  * to flag when unexpected conditions are encountered in the data.
  */
+@MessageParser(
+        name="Always Fails",
+        description = "A parser that always fails to indicate an error condition."
+)
 public class AlwaysFailParser implements Parser {
     private Throwable error;
 

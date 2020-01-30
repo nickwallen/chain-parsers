@@ -4,6 +4,7 @@ import com.cloudera.ccp.chains.parsers.ConfigName;
 import com.cloudera.ccp.chains.parsers.ConfigValue;
 import com.cloudera.ccp.chains.parsers.FieldName;
 import com.cloudera.ccp.chains.parsers.Message;
+import com.cloudera.ccp.chains.parsers.MessageParser;
 import com.cloudera.ccp.chains.parsers.Parser;
 
 import java.util.ArrayList;
@@ -14,6 +15,10 @@ import java.util.List;
 /**
  * A parser which can remove fields from a message.
  */
+@MessageParser(
+        name="Remove Field",
+        description="Removes a field from a message."
+)
 public class RemoveFieldParser implements Parser {
     private static ConfigName toRemoveConfig = ConfigName.of("toRemove", true);
 
