@@ -7,6 +7,7 @@ import com.cloudera.ccp.chains.parsers.Message;
 import com.cloudera.ccp.chains.parsers.Regex;
 import com.cloudera.ccp.chains.parsers.core.AlwaysFailParser;
 import com.cloudera.ccp.chains.parsers.core.DelimitedTextParser;
+import com.cloudera.ccp.chains.parsers.core.RemoveFieldParser;
 import com.cloudera.ccp.chains.parsers.core.TimestampParser;
 import org.apache.commons.collections.MapUtils;
 
@@ -23,7 +24,7 @@ public class ParserChainDemo {
                 .addField(FieldName.of("original_string"), FieldValue.of(input1))
                 .build();
 
-        System.out.println("\n\nParsing a message that should get timestamped...");
+        System.out.println("\n\n----> Using a route to add a timestamp to some messages <-----");
         ChainRunner runner = new ChainRunner();
         List<Message> results1 = runner.run(message1, chain);
         printResults(results1);
@@ -34,9 +35,19 @@ public class ParserChainDemo {
                 .addField(FieldName.of("original_string"), FieldValue.of(input2))
                 .build();
 
-        System.out.println("\n\n----> Parsing a message that should cause an error...");
+        System.out.println("\n\n----> Using a parser chain to error on unexpected input <-----");
         List<Message> results2 = runner.run(message2, chain);
         printResults(results2);
+
+        // a message that will not match and take the default route and have the 'asa_tag' removed
+        String input3 = "%ASA-9-9999999: Teardown ICMP connection for faddr 10.22.8.74/0(LOCAL\\user.name) gaddr 10.22.8.205/0 laddr 10.22.8.205/0";
+        Message message3 = Message.builder()
+                .addField(FieldName.of("original_string"), FieldValue.of(input3))
+                .build();
+
+        System.out.println("\n\n----> Using a default route to remove 'asa_tag' from all messages that do not need it <-----");
+        List<Message> results3 = runner.run(message3, chain);
+        printResults(results3);
     }
 
     private static void printResults(List<Message> results) {
@@ -66,12 +77,17 @@ public class ParserChainDemo {
         AlwaysFailParser alwaysFailParser = new AlwaysFailParser()
                 .withError("Unexpected 'asa_tag'");
 
-        // CSV -> Router -> Timestamp
+        // removes the 'asa_tag' from message that don't need it
+        RemoveFieldParser removeFieldParser = new RemoveFieldParser()
+                .removeField(FieldName.of("asa_tag"));
+
+        // build the parser chain
         return new ChainBuilder()
                 .then(delimitedTextParser)
                 .routeBy(FieldName.of("asa_tag"))
-                .then(Regex.of("%ASA-6-302021:"), timestampParser)
-                .then(Regex.of("%ASA-9-102021:"), alwaysFailParser)
+                .thenMatch(Regex.of("%ASA-6-302021:"), timestampParser)
+                .thenMatch(Regex.of("%ASA-9-102021:"), alwaysFailParser)
+                .thenDefault(removeFieldParser)
                 .head();
     }
 }

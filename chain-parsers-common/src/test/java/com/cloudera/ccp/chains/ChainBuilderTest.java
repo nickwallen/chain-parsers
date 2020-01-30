@@ -50,7 +50,7 @@ public class ChainBuilderTest {
         ChainLink head = new ChainBuilder()
                 .then(firstParser)
                 .routeBy(FieldName.of("timestamp"))
-                .then(Regex.of("[0-9]+"), secondParser)
+                .thenMatch(Regex.of("[0-9]+"), secondParser)
                 .head();
 
         // validate the first link
@@ -66,7 +66,7 @@ public class ChainBuilderTest {
     void routerFirstInChain() {
         ChainLink head = new ChainBuilder()
                 .routeBy(FieldName.of("timestamp"))
-                .then(Regex.of("[0-9]+"), secondParser)
+                .thenMatch(Regex.of("[0-9]+"), secondParser)
                 .head();
         assertTrue(head instanceof RouterLink);
     }
@@ -80,7 +80,7 @@ public class ChainBuilderTest {
         ChainLink mainChain = new ChainBuilder()
                 .then(firstParser)
                 .routeBy(FieldName.of("timestamp"))
-                .then(Regex.of("[0-9]+"), subChain)
+                .thenMatch(Regex.of("[0-9]+"), subChain)
                 .head();
 
         // validate the main chain
@@ -113,7 +113,7 @@ public class ChainBuilderTest {
         // cannot define a route before calling `routeBy`
         assertThrows(IllegalStateException.class,
                 () -> new ChainBuilder()
-                        .then(Regex.of("[0-9]+"), secondParser)
+                        .thenMatch(Regex.of("[0-9]+"), secondParser)
                         .head());
     }
 }

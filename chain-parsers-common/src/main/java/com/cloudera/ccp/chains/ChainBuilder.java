@@ -16,8 +16,8 @@ import java.util.Objects;
  * ChainLink chain = new ChainBuilder()
  *     .then(csvParser)
  *     .routeBy(routerField)
- *     .then(Regex.of("%ASA-6-302021:"), subChain)
- *     .then(Regex.of("%ASA-9-302041:"), anotherParser)
+ *     .thenMatch(Regex.of("%ASA-6-302021:"), subChain)
+ *     .thenMatch(Regex.of("%ASA-9-302041:"), anotherParser)
  *     .head();
  * </code>
  */
@@ -47,7 +47,19 @@ public class ChainBuilder {
         return this;
     }
 
-    public ChainBuilder then(Regex regex, ChainLink nextLink) {
+    public ChainBuilder thenDefault(ChainLink nextLink) {
+        if(router == null) {
+            throw new IllegalStateException("Must call routeBy before creating a route");
+        }
+        router.withDefault(nextLink);
+        return this;
+    }
+
+    public ChainBuilder thenDefault(Parser parser) {
+        return thenDefault(new NextChainLink(parser));
+    }
+
+    public ChainBuilder thenMatch(Regex regex, ChainLink nextLink) {
         if(router == null) {
             throw new IllegalStateException("Must call routeBy before creating a route");
         }
@@ -55,22 +67,15 @@ public class ChainBuilder {
         return this;
     }
 
-    public ChainBuilder then(Regex regex, Parser parser) {
-        if(router == null) {
-            throw new IllegalStateException("Must call routeBy before creating a route");
-        }
-        router.withRoute(regex, new NextChainLink(parser));
-        return this;
-    }
-
-    public ChainBuilder then(Parser parser) {
-        if(router != null) {
-            throw new IllegalStateException("Cannot add another simple link after a router");
-        }
-        return then(new NextChainLink(parser));
+    public ChainBuilder thenMatch(Regex regex, Parser parser) {
+        return thenMatch(regex, new NextChainLink(parser));
     }
 
     public ChainBuilder then(NextChainLink nextLink) {
+        if(router != null) {
+            throw new IllegalStateException("Cannot add another link after a router. Must define regex or default route.");
+        }
+
         if(head == null) {
             // this is a new chain
             this.head = nextLink;
@@ -83,5 +88,9 @@ public class ChainBuilder {
         }
 
         return this;
+    }
+
+    public ChainBuilder then(Parser parser) {
+        return then(new NextChainLink(parser));
     }
 }
