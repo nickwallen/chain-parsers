@@ -2,6 +2,8 @@ package com.cloudera.ccp.chains.parsers;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -48,6 +50,28 @@ public class MessageTest {
 
         // validate absence
         assertFalse(copy.getField(FieldName.of("field1")).isPresent());
+
+        // no errors
+        assertFalse(copy.getError().isPresent());
+    }
+
+    @Test
+    void removeFields() {
+        Message original = Message.builder()
+                .addField(FieldName.of("field1"), FieldValue.of("value1"))
+                .addField(FieldName.of("field2"), FieldValue.of("value2"))
+                .addField(FieldName.of("field3"), FieldValue.of("value3"))
+                .build();
+
+        Message copy = Message.builder()
+                .withFields(original)
+                .removeFields(Arrays.asList(FieldName.of("field1"), FieldName.of("field2"), FieldName.of("field3")))
+                .build();
+
+        // validate absence
+        assertFalse(copy.getField(FieldName.of("field1")).isPresent());
+        assertFalse(copy.getField(FieldName.of("field2")).isPresent());
+        assertFalse(copy.getField(FieldName.of("field3")).isPresent());
 
         // no errors
         assertFalse(copy.getError().isPresent());
