@@ -1,9 +1,11 @@
 package com.cloudera.ccp.chains.parsers;
 
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -78,12 +80,21 @@ public class Message {
         return new Builder();
     }
 
+    /**
+     * Returns the value of a field within this message.
+     * @param fieldName The name of the field.
+     * @return The value of the field or Optional.empty if it does not exist.
+     */
     public Optional<FieldValue> getField(FieldName fieldName) {
         if(fields.containsKey(fieldName)) {
             return Optional.of(fields.get(fieldName));
         } else {
             return Optional.empty();
         }
+    }
+
+    public Map<FieldName, FieldValue> getFields() {
+        return Collections.unmodifiableMap(fields);
     }
 
     public Optional<Throwable> getError() {
@@ -118,7 +129,6 @@ public class Message {
         return "Message{" +
                 "fields=" + fields +
                 ", error=" + error +
-
                 '}';
     }
 }

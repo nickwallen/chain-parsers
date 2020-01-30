@@ -1,5 +1,8 @@
-package com.cloudera.ccp.chains.links;
+package com.cloudera.ccp.chains;
 
+import com.cloudera.ccp.chains.links.ChainLink;
+import com.cloudera.ccp.chains.links.NextChainLink;
+import com.cloudera.ccp.chains.links.RouterLink;
 import com.cloudera.ccp.chains.parsers.FieldName;
 import com.cloudera.ccp.chains.parsers.Parser;
 import com.cloudera.ccp.chains.parsers.Regex;
@@ -7,7 +10,16 @@ import com.cloudera.ccp.chains.parsers.Regex;
 import java.util.Objects;
 
 /**
- * Simplifies the construction of a parser chain.
+ * Provides a fluent API for the construction of a parser chain.
+ *
+ * <code>
+ * ChainLink chain = new ChainBuilder()
+ *     .then(csvParser)
+ *     .routeBy(routerField)
+ *     .then(Regex.of("%ASA-6-302021:"), subChain)
+ *     .then(Regex.of("%ASA-9-302041:"), anotherParser)
+ *     .head();
+ * </code>
  */
 public class ChainBuilder {
     private ChainLink head;

@@ -1,6 +1,5 @@
 package com.cloudera.ccp.chains;
 
-import com.cloudera.ccp.chains.links.ChainBuilder;
 import com.cloudera.ccp.chains.links.ChainLink;
 import com.cloudera.ccp.chains.parsers.FieldName;
 import com.cloudera.ccp.chains.parsers.FieldValue;
@@ -15,7 +14,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ParserChainRunnerTest {
+public class ChainRunnerTest {
 
     @Test
     void runOneLinkChain() {
@@ -33,7 +32,7 @@ public class ParserChainRunnerTest {
         Message input = Message.builder()
                 .addField(FieldName.of("original_string"), FieldValue.of("some message"))
                 .build();
-        ParserChainRunner runner = new ParserChainRunner();
+        ChainRunner runner = new ChainRunner();
         List<Message> results = runner.run(input, chain);
 
         // the first message returned should include only the original input
@@ -71,7 +70,7 @@ public class ParserChainRunnerTest {
         Message input = Message.builder()
                 .addField(FieldName.of("original_string"), FieldValue.of("some message"))
                 .build();
-        ParserChainRunner runner = new ParserChainRunner();
+        ChainRunner runner = new ChainRunner();
         List<Message> results = runner.run(input, chain);
 
         // the first message returned should include only the original input
@@ -112,7 +111,7 @@ public class ParserChainRunnerTest {
         Message input = Message.builder()
                 .addField(FieldName.of("original_string"), FieldValue.of("some message"))
                 .build();
-        ParserChainRunner runner = new ParserChainRunner();
+        ChainRunner runner = new ChainRunner();
         List<Message> results = runner.run(input, chain);
 
         // the first message returned should include only the original input

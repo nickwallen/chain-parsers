@@ -3,6 +3,9 @@ package com.cloudera.ccp.chains.parsers;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * The name of a configuration element used to configure a {@link Parser}.
  */
@@ -29,6 +32,10 @@ public class ConfigName {
 
     public boolean isRequired() {
         return isRequired;
+    }
+
+    public List<ConfigValue> expects() {
+        return Arrays.asList(ConfigValue.of("label", ""), ConfigValue.of("index", "0"));
     }
 
     @Override
