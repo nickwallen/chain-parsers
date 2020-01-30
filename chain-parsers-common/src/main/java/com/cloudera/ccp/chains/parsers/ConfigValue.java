@@ -1,5 +1,6 @@
 package com.cloudera.ccp.chains.parsers;
 
+import com.cloudera.ccp.chains.parsers.core.DelimitedTextParser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -10,7 +11,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * <p>Multiple {@link ConfigValue} objects can be associated with a {@link ConfigName}.
  * To distinguish between these the {@link ConfigValue#key} field can be used.
  *
- * <p>For example, the {@link com.cloudera.ccp.chains.parsers.core.CSVParser}
+ * <p>For example, the {@link DelimitedTextParser}
  * requires the output fields to be defined.  In this case, two {@link ConfigValue}s
  * are required; one to identify the name/label of the output field and another for
  * the index.

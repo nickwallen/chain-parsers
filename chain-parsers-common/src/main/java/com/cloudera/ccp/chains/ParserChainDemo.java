@@ -6,7 +6,7 @@ import com.cloudera.ccp.chains.parsers.FieldValue;
 import com.cloudera.ccp.chains.parsers.Message;
 import com.cloudera.ccp.chains.parsers.Regex;
 import com.cloudera.ccp.chains.parsers.core.AlwaysFailParser;
-import com.cloudera.ccp.chains.parsers.core.CSVParser;
+import com.cloudera.ccp.chains.parsers.core.DelimitedTextParser;
 import com.cloudera.ccp.chains.parsers.core.TimestampParser;
 import org.apache.commons.collections.MapUtils;
 
@@ -52,8 +52,8 @@ public class ParserChainDemo {
     }
 
     private static ChainLink buildParserChain() {
-        // a csv parser is used to extract the 'asa_tag' for routing
-        CSVParser csvParser = new CSVParser()
+        // extracts the 'asa_tag' for routing
+        DelimitedTextParser delimitedTextParser = new DelimitedTextParser()
                 .withInputField(FieldName.of("original_string"))
                 .withDelimiter(Regex.of("\\s+"))
                 .withOutputField(FieldName.of("asa_tag"), 0);
@@ -68,7 +68,7 @@ public class ParserChainDemo {
 
         // CSV -> Router -> Timestamp
         return new ChainBuilder()
-                .then(csvParser)
+                .then(delimitedTextParser)
                 .routeBy(FieldName.of("asa_tag"))
                 .then(Regex.of("%ASA-6-302021:"), timestampParser)
                 .then(Regex.of("%ASA-9-102021:"), alwaysFailParser)

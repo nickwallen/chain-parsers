@@ -20,7 +20,7 @@ import static java.lang.String.format;
 /**
  * Parses delimited text like CSV.
  */
-public class CSVParser implements Parser {
+public class DelimitedTextParser implements Parser {
 
     /**
      * Defines an output field that is created by the parser.
@@ -45,7 +45,7 @@ public class CSVParser implements Parser {
     private List<OutputField> outputFields;
     private boolean trimWhitespace;
 
-    public CSVParser() {
+    public DelimitedTextParser() {
         outputFields = new ArrayList<>();
         delimiter = Regex.of(",");
         trimWhitespace = true;
@@ -54,7 +54,7 @@ public class CSVParser implements Parser {
     /**
      * @param inputField The name of the field containing the text to parse.
      */
-    public CSVParser withInputField(FieldName inputField) {
+    public DelimitedTextParser withInputField(FieldName inputField) {
         this.inputField = Objects.requireNonNull(inputField);
         return this;
     }
@@ -66,7 +66,7 @@ public class CSVParser implements Parser {
     /**
      * @param delimiter A character or regular expression defining the delimiter used to split the text.
      */
-    public CSVParser withDelimiter(Regex delimiter) {
+    public DelimitedTextParser withDelimiter(Regex delimiter) {
         this.delimiter = Objects.requireNonNull(delimiter);
         return this;
     }
@@ -79,7 +79,7 @@ public class CSVParser implements Parser {
      * @param fieldName The name of a field to create.
      * @param index The 0-based index defining which delimited element is added to the field.
      */
-    public CSVParser withOutputField(FieldName fieldName, int index) {
+    public DelimitedTextParser withOutputField(FieldName fieldName, int index) {
         outputFields.add(new OutputField(fieldName, index));
         return this;
     }
@@ -91,7 +91,7 @@ public class CSVParser implements Parser {
     /**
      * @param trimWhitespace True, if whitespace should be trimmed from each value. Otherwise, false.
      */
-    public CSVParser trimWhitespace(boolean trimWhitespace) {
+    public DelimitedTextParser trimWhitespace(boolean trimWhitespace) {
         this.trimWhitespace = trimWhitespace;
         return this;
     }

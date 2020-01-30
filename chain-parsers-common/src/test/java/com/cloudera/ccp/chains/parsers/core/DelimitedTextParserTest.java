@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CSVParserTest {
+public class DelimitedTextParserTest {
 
     @Test
     void parseCSV() {
@@ -26,7 +26,7 @@ public class CSVParserTest {
                 .build();
 
         // parse the message
-        Message output = new CSVParser()
+        Message output = new DelimitedTextParser()
                 .withDelimiter(Regex.of(","))
                 .withInputField(FieldName.of("input"))
                 .withOutputField(FieldName.of("first"), 0)
@@ -54,7 +54,7 @@ public class CSVParserTest {
                 .build();
 
         // parse the message
-        Message output = new CSVParser()
+        Message output = new DelimitedTextParser()
                 .withDelimiter(Regex.of("\t"))
                 .withInputField(FieldName.of("input"))
                 .withOutputField(FieldName.of("first"), 0)
@@ -80,7 +80,7 @@ public class CSVParserTest {
                 .build();
 
         // parse the message
-        Message output = new CSVParser()
+        Message output = new DelimitedTextParser()
                 .withDelimiter(Regex.of(","))
                 .withInputField(FieldName.of("input"))
                 .withOutputField(FieldName.of("first"), 0)
@@ -99,7 +99,7 @@ public class CSVParserTest {
 
         // there are only 4 fields in the CSV, but trying to use an index of 10
         int index = 10;
-        Message output = new CSVParser()
+        Message output = new DelimitedTextParser()
                 .withDelimiter(Regex.of(","))
                 .withInputField(FieldName.of("input"))
                 .withOutputField(FieldName.of("first"), index)
@@ -121,7 +121,7 @@ public class CSVParserTest {
                 .build();
 
         // parse the message
-        Message output = new CSVParser()
+        Message output = new DelimitedTextParser()
                 .withDelimiter(Regex.of(","))
                 .withInputField(FieldName.of("input"))
                 .withOutputField(FieldName.of("first"), 0)
@@ -144,7 +144,7 @@ public class CSVParserTest {
                 .build();
 
         // parse the message
-        Message output = new CSVParser()
+        Message output = new DelimitedTextParser()
                 .trimWhitespace(false)
                 .withDelimiter(Regex.of(","))
                 .withInputField(FieldName.of("input"))
@@ -169,7 +169,7 @@ public class CSVParserTest {
     void inputFieldNotDefined() {
         Message input = Message.builder()
                 .build();
-        Message output = new CSVParser()
+        Message output = new DelimitedTextParser()
                 .withDelimiter(Regex.of(","))
                 .withOutputField(FieldName.of("first"), 0)
                 .parse(input);
@@ -182,7 +182,7 @@ public class CSVParserTest {
     void outputFieldNotDefined() {
         Message input = Message.builder()
                 .build();
-        Message output = new CSVParser()
+        Message output = new DelimitedTextParser()
                 .withInputField(FieldName.of("input"))
                 .withDelimiter(Regex.of(","))
                 .parse(input);
@@ -193,19 +193,19 @@ public class CSVParserTest {
 
     @Test
     void configureInputField() {
-        CSVParser parser = new CSVParser();
-        parser.configure(CSVParser.inputConfig, Arrays.asList(ConfigValue.of("original_string")));
+        DelimitedTextParser parser = new DelimitedTextParser();
+        parser.configure(DelimitedTextParser.inputConfig, Arrays.asList(ConfigValue.of("original_string")));
         assertEquals(FieldName.of("original_string"), parser.getInputField());
     }
 
     @Test
     void configureOutputFields() {
-        CSVParser parser = new CSVParser();
-        parser.configure(CSVParser.outputConfig, Arrays.asList(ConfigValue.of("label", "first"), ConfigValue.of("index", "0")));
-        parser.configure(CSVParser.outputConfig, Arrays.asList(ConfigValue.of("label", "second"), ConfigValue.of("index", "1")));
-        parser.configure(CSVParser.outputConfig, Arrays.asList(ConfigValue.of("label", "third"), ConfigValue.of("index", "2")));
+        DelimitedTextParser parser = new DelimitedTextParser();
+        parser.configure(DelimitedTextParser.outputConfig, Arrays.asList(ConfigValue.of("label", "first"), ConfigValue.of("index", "0")));
+        parser.configure(DelimitedTextParser.outputConfig, Arrays.asList(ConfigValue.of("label", "second"), ConfigValue.of("index", "1")));
+        parser.configure(DelimitedTextParser.outputConfig, Arrays.asList(ConfigValue.of("label", "third"), ConfigValue.of("index", "2")));
 
-        List<CSVParser.OutputField> outputFields = parser.getOutputFields();
+        List<DelimitedTextParser.OutputField> outputFields = parser.getOutputFields();
         assertEquals(3, outputFields.size());
 
         // first output field
@@ -223,26 +223,26 @@ public class CSVParserTest {
 
     @Test
     void configureDelimiter() {
-        CSVParser parser = new CSVParser();
-        parser.configure(CSVParser.delimiterConfig, Arrays.asList(ConfigValue.of("|")));
+        DelimitedTextParser parser = new DelimitedTextParser();
+        parser.configure(DelimitedTextParser.delimiterConfig, Arrays.asList(ConfigValue.of("|")));
         assertEquals(Regex.of("|"), parser.getDelimiter());
     }
 
     @Test
     void configureTrim() {
-        CSVParser parser = new CSVParser();
-        parser.configure(CSVParser.trimConfig, Arrays.asList(ConfigValue.of("false")));
+        DelimitedTextParser parser = new DelimitedTextParser();
+        parser.configure(DelimitedTextParser.trimConfig, Arrays.asList(ConfigValue.of("false")));
         assertFalse(parser.isTrimWhitespace());
     }
 
     @Test
     void validConfigurations() {
-        CSVParser parser = new CSVParser();
+        DelimitedTextParser parser = new DelimitedTextParser();
         assertThat(parser.validConfigurations(),
                 contains(
-                        CSVParser.inputConfig,
-                        CSVParser.outputConfig,
-                        CSVParser.delimiterConfig,
-                        CSVParser.trimConfig));
+                        DelimitedTextParser.inputConfig,
+                        DelimitedTextParser.outputConfig,
+                        DelimitedTextParser.delimiterConfig,
+                        DelimitedTextParser.trimConfig));
     }
 }
