@@ -1,22 +1,20 @@
 package com.cloudera.ccp.chains;
 
 import com.cloudera.ccp.chains.links.ChainLink;
-import com.cloudera.ccp.chains.parsers.FieldName;
-import com.cloudera.ccp.chains.parsers.FieldValue;
 import com.cloudera.ccp.chains.parsers.Message;
 import com.cloudera.ccp.chains.parsers.Parser;
-import com.cloudera.ccp.chains.parsers.core.AlwaysFailParser;
-import com.cloudera.ccp.chains.parsers.core.TimestampParser;
-import com.cloudera.ccp.chains.parsers.core.TimestampParserTest;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class ChainRunnerTest {
 

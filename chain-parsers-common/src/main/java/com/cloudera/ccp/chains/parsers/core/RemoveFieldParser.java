@@ -15,10 +15,7 @@ import java.util.List;
 /**
  * A parser which can remove fields from a message.
  */
-@MessageParser(
-        name="Remove Field",
-        description="Removes a field from a message."
-)
+@MessageParser(name="Remove Field", description="Removes a field from a message.")
 public class RemoveFieldParser implements Parser {
     private static ConfigName toRemoveConfig = ConfigName.of("toRemove", true);
 

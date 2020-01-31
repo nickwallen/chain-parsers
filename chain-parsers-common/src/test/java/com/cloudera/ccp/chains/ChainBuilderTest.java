@@ -1,6 +1,5 @@
 package com.cloudera.ccp.chains;
 
-import com.cloudera.ccp.chains.ChainBuilder;
 import com.cloudera.ccp.chains.links.ChainLink;
 import com.cloudera.ccp.chains.links.RouterLink;
 import com.cloudera.ccp.chains.parsers.FieldName;
@@ -13,8 +12,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ChainBuilderTest {
     Message message;

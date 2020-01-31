@@ -21,10 +21,7 @@ import static java.lang.String.format;
 /**
  * Parses delimited text like CSV.
  */
-@MessageParser(
-        name="Delimited Text",
-        description="Parses delimited text like CSV."
-)
+@MessageParser(name="Delimited Text", description="Parses delimited text like CSV or TSV.")
 public class DelimitedTextParser implements Parser {
 
     /**
@@ -194,6 +191,8 @@ public class DelimitedTextParser implements Parser {
         int index = -1;
         FieldName outputField = null;
         for(ConfigValue value: configValues) {
+            // TODO label and index should not be magic values
+            // TODO how to express what keys are expected?
             if("label".equals(value.getKey())) {
                 outputField = FieldName.of(value.getValue());
             } else if("index".equals(value.getKey())) {

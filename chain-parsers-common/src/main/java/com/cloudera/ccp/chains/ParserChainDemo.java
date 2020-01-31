@@ -35,7 +35,7 @@ public class ParserChainDemo {
                 .addField(FieldName.of("original_string"), FieldValue.of(input2))
                 .build();
 
-        System.out.println("\n\n----> Using a parser chain to error on unexpected input <-----");
+        System.out.println("\n\n----> Using a parser chain to remove 'asa_tag' <-----");
         List<Message> results2 = runner.run(message2, chain);
         printResults(results2);
 
@@ -45,7 +45,7 @@ public class ParserChainDemo {
                 .addField(FieldName.of("original_string"), FieldValue.of(input3))
                 .build();
 
-        System.out.println("\n\n----> Using a default route to remove 'asa_tag' from all messages that do not need it <-----");
+        System.out.println("\n\n----> Using a default route to error on unexpected values <-----");
         List<Message> results3 = runner.run(message3, chain);
         printResults(results3);
     }
@@ -86,8 +86,8 @@ public class ParserChainDemo {
                 .then(delimitedTextParser)
                 .routeBy(FieldName.of("asa_tag"))
                 .thenMatch(Regex.of("%ASA-6-302021:"), timestampParser)
-                .thenMatch(Regex.of("%ASA-9-102021:"), alwaysFailParser)
-                .thenDefault(removeFieldParser)
+                .thenMatch(Regex.of("%ASA-9-102021:"), removeFieldParser)
+                .thenDefault(alwaysFailParser)
                 .head();
     }
 }

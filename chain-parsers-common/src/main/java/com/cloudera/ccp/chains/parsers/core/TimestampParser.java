@@ -16,10 +16,7 @@ import java.util.Objects;
  * A parser that adds the current system time as a field to the message. Useful for
  * tracking the time when a message was parsed.
  */
-@MessageParser(
-        name="Timestamp",
-        description="Adds a timestamp to a message."
-)
+@MessageParser(name="Timestamp", description="Adds a timestamp to a message.")
 public class TimestampParser implements Parser {
 
     public static class Clock {

@@ -12,6 +12,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasItems;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -238,8 +239,7 @@ public class DelimitedTextParserTest {
     @Test
     void validConfigurations() {
         DelimitedTextParser parser = new DelimitedTextParser();
-        assertThat(parser.validConfigurations(),
-                contains(
+        assertThat(parser.validConfigurations(), hasItems(
                         DelimitedTextParser.inputConfig,
                         DelimitedTextParser.outputConfig,
                         DelimitedTextParser.delimiterConfig,
