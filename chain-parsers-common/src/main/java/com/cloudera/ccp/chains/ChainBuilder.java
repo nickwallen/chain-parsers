@@ -34,6 +34,11 @@ public class ChainBuilder {
         return Objects.requireNonNull(head, "No chain defined yet.");
     }
 
+    /**
+     * Adds a router to the chain.
+     * <p>After 'routeBy' use 'thenMatch' or 'thenDefault'.
+     * @param routeBy The field used to route messages.
+     */
     public ChainBuilder routeBy(FieldName routeBy) {
         // create the router
         router = new RouterLink().withInputField(routeBy);
@@ -47,18 +52,12 @@ public class ChainBuilder {
         return this;
     }
 
-    public ChainBuilder thenDefault(ChainLink nextLink) {
-        if(router == null) {
-            throw new IllegalStateException("Must call routeBy before creating a route");
-        }
-        router.withDefault(nextLink);
-        return this;
-    }
-
-    public ChainBuilder thenDefault(Parser parser) {
-        return thenDefault(new NextChainLink(parser));
-    }
-
+    /**
+     * Adds a route to a router.
+     * <p>This call must be proceeded by a call to 'routeBy'.
+     * @param regex The regex used to 'match'.
+     * @param nextLink The next link on this route.
+     */
     public ChainBuilder thenMatch(Regex regex, ChainLink nextLink) {
         if(router == null) {
             throw new IllegalStateException("Must call routeBy before creating a route");
@@ -67,10 +66,43 @@ public class ChainBuilder {
         return this;
     }
 
+    /**
+     * Adds a route to a router.
+     * <p>This call must be proceeded by a call to 'routeBy'.
+     * @param regex The regex used to 'match'.
+     * @param parser The next parser on this route.
+     */
     public ChainBuilder thenMatch(Regex regex, Parser parser) {
         return thenMatch(regex, new NextChainLink(parser));
     }
 
+    /**
+     * Add a default route for a router. If no match occur, the default route is used.
+     * <p>This call must be proceeded by a call to 'routeBy'.
+     * @param nextLink The next link.
+     */
+    public ChainBuilder thenDefault(ChainLink nextLink) {
+        if(router == null) {
+            throw new IllegalStateException("Must call routeBy before creating a route");
+        }
+        router.withDefault(nextLink);
+        return this;
+    }
+
+    /**
+     * Add a default route for a router. If no matches occur, the default route is used.
+     * <p>This call must be proceeded by 'routeBy'.
+     * @param parser The next parser.
+     */
+
+    public ChainBuilder thenDefault(Parser parser) {
+        return thenDefault(new NextChainLink(parser));
+    }
+
+    /**
+     * Adds a link to the chain.
+     * @param nextLink The next link in the chain.
+     */
     public ChainBuilder then(NextChainLink nextLink) {
         if(router != null) {
             throw new IllegalStateException("Cannot add another link after a router. Must define regex or default route.");
@@ -90,6 +122,10 @@ public class ChainBuilder {
         return this;
     }
 
+    /**
+     * Adds a link to the chain.
+     * @param parser The next parser in the chain.
+     */
     public ChainBuilder then(Parser parser) {
         return then(new NextChainLink(parser));
     }
