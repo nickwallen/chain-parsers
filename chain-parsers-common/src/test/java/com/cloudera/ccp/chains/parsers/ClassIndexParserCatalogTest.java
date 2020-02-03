@@ -7,7 +7,9 @@ import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ClassIndexParserCatalogTest {
 
@@ -38,15 +40,35 @@ public class ClassIndexParserCatalogTest {
     }
 
     @Test
-    void testCatalog() {
+    void findParser() {
         ParserCatalog catalog = new ClassIndexParserCatalog();
-        List<MessageParser> annotations = catalog.getParsers();
-        assertTrue(annotations.size() > 0);
+        List<ParserInfo> parsers = catalog.getParsers();
+        boolean foundFakeParser = false;
+        for(ParserInfo parserInfo: parsers) {
+            if(FakeParser.class.equals(parserInfo.getParserClass())) {
+                // found the fake parser
+                foundFakeParser = true;
+                assertEquals("Fake Parser", parserInfo.getName());
+                assertEquals("Parser created for catalog tests.", parserInfo.getDescription());
+            }
+        }
+        assertTrue(foundFakeParser);
+    }
 
-        List<String> names = annotations.stream().map(a -> a.name()).collect(Collectors.toList());
-        assertThat(names, hasItem("Fake Parser"));
+    /**
+     * A parser that does not implement {@link Parser}.  This is not a valid parser.
+     */
+    @MessageParser(name="Bad Parser", description="A description.")
+    private static class BadParser { }
 
-        List<String> descriptions = annotations.stream().map(a -> a.description()).collect(Collectors.toList());
-        assertThat(descriptions, hasItem("Parser created for catalog tests."));
+    @Test
+    void badParser() {
+        ParserCatalog catalog = new ClassIndexParserCatalog();
+        List<ParserInfo> parsers = catalog.getParsers();
+        for(ParserInfo parserInfo: parsers) {
+            if(BadParser.class.equals(parserInfo.getParserClass())) {
+                fail("Should not have 'found' this bad parser.");
+            }
+        }
     }
 }

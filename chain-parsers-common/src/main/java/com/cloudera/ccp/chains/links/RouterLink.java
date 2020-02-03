@@ -14,8 +14,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Allows messages to be parsed differently based on values contained
- * within a message.
+ * Routes message to one of many possible sub-chains based on values
+ * contained with a {@link Message} matching a regular expression.
  */
 public class RouterLink implements ChainLink {
 

@@ -10,5 +10,5 @@ public interface ParserCatalog {
     /**
      * Returns all of the available parsers in the catalog.
      */
-    List<MessageParser> getParsers();
+    List<ParserInfo> getParsers();
 }

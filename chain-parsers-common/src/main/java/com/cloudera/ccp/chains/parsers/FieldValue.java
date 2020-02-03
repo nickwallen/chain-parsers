@@ -7,6 +7,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * The value of a field contained within a {@link Message}.
  */
 public class FieldValue {
+    // TODO what should be excluded here using this regex?
     private static final Regex validFieldValue = Regex.of(".*");
     private final String value;
 
