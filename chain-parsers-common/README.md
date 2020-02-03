@@ -1,7 +1,12 @@
 
 
 
-### `Message`
+* [Message](#message)
+* [ChainBuilder](#chainbuilder)
+* [ChainRunner](#chainrunner)
+* [ParserCatalog](#parsercatalog)
+
+### Message
 
 A `Message` is what a `Parser` parses.  A `Message` is composed of a set of fields. A `Parser` reads from one or more fields of an input message and creates new output fields, modifies existing output fields, or removes output fields.
 
@@ -27,7 +32,7 @@ Message output = Message.builder()
 By convention, the first `Message` passed into a parser chain should define the field `original_string` with the input that needs parsed.  That being said, there is nothing in the API that requires or enforces this convention.
 
 
-### `ChainBuilder`
+### ChainBuilder
 
 Provides a fluent API for the construction of a parser chain.  This abstracts and simplifies the construction of parser chains, hiding an implementation which composes many `ChainLink` and `Parser` objects into a single parser chain.  In this sense, it is optional.
 
@@ -62,7 +67,7 @@ ChainLink chain = new ChainBuilder()
     .head();
 ```
 
-### `ChainRunner`
+### ChainRunner
 
 Parses a `Message` by executing a parser chain. Returns a list of messages, one `Message` for each `Parser` in the parser chain. 
 ```
@@ -74,6 +79,10 @@ The last element in the resulting list is the final, fully parsed message.
 
 The first element in the resulting list is the original message passed into the `ChainRunner`.  
 
-### `ParserCatalog`
+### ParserCatalog
 
-Provides a catalog of all parsers available to the user.  The primary implementation of this functionality is the `ClassIndexParserCatalog`
+Provides a catalog of all parsers available to the user.  The primary implementation of this functionality is the `ClassIndexParserCatalog`.
+
+```
+List<ParserInfo> parsers = new ClassIndexParserCatalog().getParsers();
+```
