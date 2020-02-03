@@ -64,16 +64,18 @@ public class SyslogParser implements Parser {
 
     @Override
     public List<FieldName> outputFields() {
+        // TODO implement me
         return null;
     }
 
     @Override
     public List<ConfigName> validConfigurations() {
+        // TODO implement me
         return null;
     }
 
     @Override
     public void configure(ConfigName configName, List<ConfigValue> configValues) {
-
+        // TODO implement me
     }
 }
