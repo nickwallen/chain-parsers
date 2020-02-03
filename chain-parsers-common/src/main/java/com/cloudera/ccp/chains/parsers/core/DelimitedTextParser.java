@@ -109,14 +109,15 @@ public class DelimitedTextParser implements Parser {
 
     @Override
     public Message parse(Message input) {
-        Message.Builder output = Message.builder()
-                .withFields(input);
-
+        if(inputField == null) {
+            throw new IllegalStateException("Input field has not been defined.");
+        }
+        Message.Builder output = Message.builder().withFields(input);
         Optional<FieldValue> fieldValue = input.getField(inputField);
         if(fieldValue.isPresent()) {
             doParse(fieldValue.get().toString(), output);
         } else {
-            output.withError(format("Input field has not been defined"));
+            output.withError(format("Message does not contain input field '%s'", inputField.toString()));
         }
 
         return output.build();
