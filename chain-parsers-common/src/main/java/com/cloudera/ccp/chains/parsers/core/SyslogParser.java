@@ -11,7 +11,6 @@ import com.github.palindromicity.syslog.SyslogParserBuilder;
 import com.github.palindromicity.syslog.SyslogSpecification;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -46,20 +45,17 @@ public class SyslogParser implements Parser {
         Message.Builder output = Message.builder().withFields(input);
         Optional<FieldValue> value = input.getField(inputField);
         if(value.isPresent()) {
-            doParse(value.get().toString(), output);
+            new SyslogParserBuilder()
+                    .forSpecification(specification)
+                    .build()
+                    .parseLine(value.get().toString())
+                    .forEach((k, v) -> output.addField(FieldName.of(k), FieldValue.of(v.toString())));
+
         } else {
             output.withError(format("Message does not contain input field '%s'", inputField.toString()));
         }
 
         return output.build();
-    }
-
-    private void doParse(String valueToParse, Message.Builder output) {
-        Map<String, Object> values = new SyslogParserBuilder()
-                .forSpecification(specification)
-                .build()
-                .parseLine(valueToParse);
-        values.forEach((key, value) -> output.addField(FieldName.of(key), FieldValue.of(value.toString())));
     }
 
     @Override
