@@ -1,7 +1,6 @@
 package com.cloudera.ccp.chains.parsers;
 
 
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 

@@ -1,10 +1,17 @@
 
+This project provides the core Parser Chain API and functionality. This allows individual parsers to be authored and discovered, parser chains to be constructed and executed, and 
 
-
+* [Parser](#parser)
 * [Message](#message)
 * [ChainBuilder](#chainbuilder)
 * [ChainRunner](#chainrunner)
 * [ParserCatalog](#parsercatalog)
+
+### Parser
+
+A `Parser` is responsible for parsing a `Message`.  A parser chain is composed of many parsers that work together to parse a message.
+
+A `Parser` should be annotated using the `MessageParser` annotation. This annotation allows the author to expose parser metadata to the user.  This annotation also makes a parser discoverable using a `ParserCatalog`.
 
 ### Message
 
@@ -45,12 +52,13 @@ ChainLink chain = new ChainBuilder()
     .head();
 ```
 
-Use the methods `routeBy(FieldName)`, `thenMatch(Regex, ChainLink)`, and `thenMatch(Regex, Parser)` to add routing to a parser chain.
+Use the methods `routeBy(FieldName)`, `thenMatch(Regex, ChainLink|Parser)`, and `thenDefault(ChainLink|Parser)` to add routing to a parser chain.
 ```
 ChainLink chain = new ChainBuilder()
     .routeBy(FieldName.of("asa_tag"))
     .thenMatch(Regex.of("%ASA-6-302021:"), asa6Parser)
     .thenMatch(Regex.of("%ASA-9-302041:"), asa9Parser)
+    .thenDefault(defaultParser)
     .head();
 ```
 

@@ -1,6 +1,5 @@
 package com.cloudera.ccp.chains.links;
 
-import com.cloudera.ccp.chains.parsers.ConfigName;
 import com.cloudera.ccp.chains.parsers.FieldName;
 import com.cloudera.ccp.chains.parsers.FieldValue;
 import com.cloudera.ccp.chains.parsers.Message;

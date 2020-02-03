@@ -1,6 +1,6 @@
 package com.cloudera.ccp.chains.parsers;
 
-import com.cloudera.ccp.chains.ChainRunner;
+import com.cloudera.ccp.chains.links.ChainRunner;
 import org.atteo.classindex.ClassIndex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A {@link ParserCatalog} that builds a catalog parsers using a class index
+ * A {@link ParserCatalog} that builds a catalog of parsers using a class index
  * compiled at build time.
  *
  * https://github.com/atteo/classindex
@@ -25,16 +25,19 @@ public class ClassIndexParserCatalog implements ParserCatalog {
         Iterable<Class<?>> knownAnnotations = ClassIndex.getAnnotated(MessageParser.class);
         for(Class<?> clazz: knownAnnotations) {
             MessageParser annotation = clazz.getAnnotation(MessageParser.class);
+
+            // parsers must implement the parser interface
             if(Parser.class.isAssignableFrom(clazz)) {
                 // found a parser
                 Class<Parser> parserClass = (Class<Parser>) clazz;
-                results.add(ParserInfo.builder()
+                ParserInfo parserInfo = ParserInfo.builder()
                         .withName(annotation.name())
                         .withDescription(annotation.description())
                         .withParserClass(parserClass)
-                        .build());
+                        .build();
+                results.add(parserInfo);
             } else {
-                logger.warn("Found class with annotation '{}', but does not implement '{}'; class={}",
+                logger.warn("Found class with annotation '{}' that does not implement '{}'; class={}",
                         MessageParser.class.getName(), Parser.class.getName(), clazz.getName());
             }
         }

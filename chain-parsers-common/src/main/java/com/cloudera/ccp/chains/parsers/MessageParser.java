@@ -6,11 +6,25 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * A marker for {@link Parser} implementations.
+ * A marker for {@link Parser} implementations that parse {@link Message}s.
+ *
+ * <p>Using this annotation allows a parser builder to provide metadata
+ * about their parser.
+ *
+ * <p>This also makes the parser discoverable by a {@link ParserCatalog}.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @IndexAnnotated
 public @interface MessageParser {
+
+    /**
+     * Returns the name of the parser.
+     */
     String name() default "";
+
+    /**
+     * Returns a description of the parser.
+     * @return
+     */
     String description() default "";
 }

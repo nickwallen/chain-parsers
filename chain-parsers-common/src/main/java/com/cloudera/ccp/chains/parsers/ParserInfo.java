@@ -49,14 +49,23 @@ public class ParserInfo {
         this.parserClass = Objects.requireNonNull(parserClass);
     }
 
+    /**
+     * Returns the name of the parser.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns the description of the parser.
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Returns the implementation class of the parser.
+     */
     public Class<Parser> getParserClass() {
         return parserClass;
     }
