@@ -9,6 +9,7 @@ import com.cloudera.ccp.chains.parsers.MessageParser;
 import com.cloudera.ccp.chains.parsers.Parser;
 import com.github.palindromicity.syslog.SyslogParserBuilder;
 import com.github.palindromicity.syslog.SyslogSpecification;
+import com.github.palindromicity.syslog.dsl.ParseException;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -49,17 +50,26 @@ public class SyslogParser implements Parser {
         Message.Builder output = Message.builder().withFields(input);
         Optional<FieldValue> value = input.getField(inputField);
         if(value.isPresent()) {
-            new SyslogParserBuilder()
-                    .forSpecification(specification)
-                    .build()
-                    .parseLine(value.get().toString())
-                    .forEach((k, v) -> output.addField(FieldName.of(k), FieldValue.of(v.toString())));
+            doParse(output, value.get().toString());
 
         } else {
             output.withError(format("Message does not contain input field '%s'", inputField.toString()));
         }
 
         return output.build();
+    }
+
+    private void doParse(Message.Builder output, String value) {
+        try {
+            new SyslogParserBuilder()
+                    .forSpecification(specification)
+                    .build()
+                    .parseLine(value)
+                    .forEach((k, v) -> output.addField(FieldName.of(k), FieldValue.of(v.toString())));
+
+        } catch(ParseException e) {
+            output.withError(e);
+        }
     }
 
     @Override

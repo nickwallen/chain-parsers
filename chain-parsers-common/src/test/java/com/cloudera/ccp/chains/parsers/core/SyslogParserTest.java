@@ -4,10 +4,12 @@ import com.cloudera.ccp.chains.parsers.FieldName;
 import com.cloudera.ccp.chains.parsers.FieldValue;
 import com.cloudera.ccp.chains.parsers.Message;
 import com.github.palindromicity.syslog.SyslogSpecification;
+import com.github.palindromicity.syslog.dsl.ParseException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SyslogParserTest {
 
@@ -69,6 +71,20 @@ public class SyslogParserTest {
                 .addField(FieldName.of("syslog.message"), FieldValue.of("CISE_RADIUS_Accounting 0018032501 1 0 2018-09-14 10:54:09.095 +10:00"))
                 .build();
         assertEquals(expected, output);
+    }
+
+    @Test
+    void parseError() {
+        Message input = Message.builder()
+                .addField(FieldName.of("original_string"), FieldValue.of("<1> malformed input"))
+                .build();
+        Message output = new SyslogParser()
+                .withInputField(FieldName.of("original_string"))
+                .parse(input);
+
+        // expect an error to be reported and the same fields
+        assertTrue(output.getError().isPresent());
+        assertEquals(input.getFields(), output.getFields());
     }
 
     @Test
