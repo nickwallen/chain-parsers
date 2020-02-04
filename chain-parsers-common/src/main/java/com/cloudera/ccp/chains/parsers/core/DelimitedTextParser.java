@@ -17,12 +17,15 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
+import static com.cloudera.ccp.chains.parsers.core.ParserUtils.requireN;
 
 /**
  * Parses delimited text like CSV.
  */
 @MessageParser(name="Delimited Text", description="Parses delimited text like CSV or TSV.")
 public class DelimitedTextParser implements Parser {
+    static final String CONFIG_KEY_LABEL = "label";
+    static final String CONFIG_KEY_INDEX = "index";
 
     /**
      * Defines an output field that is created by the parser.
@@ -163,6 +166,9 @@ public class DelimitedTextParser implements Parser {
 
         } else if(trimConfig.equals(configName)) {
             configureTrim(configValues);
+
+        } else {
+            throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", configName));
         }
     }
 
@@ -192,11 +198,9 @@ public class DelimitedTextParser implements Parser {
         int index = -1;
         FieldName outputField = null;
         for(ConfigValue value: configValues) {
-            // TODO label and index should not be magic values
-            // TODO how to express what keys are expected?
-            if("label".equals(value.getKey())) {
+            if(CONFIG_KEY_LABEL.equals(value.getKey())) {
                 outputField = FieldName.of(value.getValue());
-            } else if("index".equals(value.getKey())) {
+            } else if(CONFIG_KEY_INDEX.equals(value.getKey())) {
                 index = Integer.parseInt(value.getValue());
             } else {
                 throw new IllegalArgumentException(String.format("Unexpected config key: %s", value.getKey()));
@@ -208,13 +212,6 @@ public class DelimitedTextParser implements Parser {
         } else {
             throw new IllegalArgumentException(String.format("For '%s' expected a value for both 'label' and 'index'",
                     outputConfig.getName()));
-        }
-    }
-
-    private void requireN(ConfigName configName, List<ConfigValue> configValues, int count) {
-        if(configValues.size() != count) {
-            String msg = "For '%s' expected %d value(s), but got %d; ";
-            throw new IllegalArgumentException(String.format(msg, configName.getName(), count, configValues.size()));
         }
     }
 }

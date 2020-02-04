@@ -11,16 +11,20 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * <p>Multiple {@link ConfigValue} objects can be associated with a {@link ConfigName}.
  * To distinguish between these the {@link ConfigValue#key} field can be used.
  *
- * <p>For example, the {@link DelimitedTextParser}
- * requires the output fields to be defined.  In this case, two {@link ConfigValue}s
- * are required; one to identify the name/label of the output field and another for
- * the index.
+ * <p>For example, the {@link DelimitedTextParser} requires the output fields to be
+ * defined.  In this case, two {@link ConfigValue}s are required; one to identify the
+ * label of the output field and another for the index.
  */
 public class ConfigValue {
     private static final Regex isValidRegex = Regex.of("[\\w\\d\\s-_.,|\\]\\[]*");
     private String key;
     private String value;
 
+    /**
+     * Create a {@link ConfigValue} with both a key and value.
+     * @param key The key.
+     * @param value The value.
+     */
     private ConfigValue(String key, String value) {
         if(!isValidRegex.matches(key)) {
             throw new IllegalArgumentException(String.format("Invalid config key: '%s'", key));

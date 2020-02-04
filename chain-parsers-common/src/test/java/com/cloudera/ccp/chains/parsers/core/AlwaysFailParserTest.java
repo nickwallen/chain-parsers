@@ -1,9 +1,15 @@
 package com.cloudera.ccp.chains.parsers.core;
 
+import com.cloudera.ccp.chains.parsers.ConfigName;
+import com.cloudera.ccp.chains.parsers.ConfigValue;
 import com.cloudera.ccp.chains.parsers.Message;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AlwaysFailParserTest {
@@ -29,5 +35,19 @@ public class AlwaysFailParserTest {
         assertTrue(output.getError().isPresent());
         assertEquals(IllegalStateException.class, output.getError().get().getClass());
         assertEquals("Parsing error encountered", output.getError().get().getMessage());
+    }
+
+    @Test
+    void configure() {
+        AlwaysFailParser parser = new AlwaysFailParser();
+        parser.configure(AlwaysFailParser.errorConfig, Arrays.asList(ConfigValue.of("the error message")));
+        assertEquals("the error message", parser.getError().getMessage());
+    }
+
+    @Test
+    void unexpectedConfig() {
+        assertThrows(IllegalArgumentException.class, () ->
+                new AlwaysFailParser()
+                        .configure(ConfigName.of("invalid", false), Collections.emptyList()));
     }
 }

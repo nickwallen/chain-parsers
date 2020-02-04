@@ -11,6 +11,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import static com.cloudera.ccp.chains.parsers.core.ParserUtils.requireN;
+
 /**
  * A {@link Parser} that always fails.
  *
@@ -19,6 +21,7 @@ import java.util.Objects;
  */
 @MessageParser(name="Always Fails", description = "A parser that always fails to indicate an error condition.")
 public class AlwaysFailParser implements Parser {
+    static final ConfigName errorConfig = ConfigName.of("error", false);
     private Throwable error;
 
     public AlwaysFailParser() {
@@ -56,6 +59,16 @@ public class AlwaysFailParser implements Parser {
 
     @Override
     public void configure(ConfigName configName, List<ConfigValue> configValues) {
-        // nothing to do
+        if(errorConfig.equals(configName)) {
+            requireN(errorConfig, configValues, 1);
+            withError(configValues.get(0).getValue());
+
+        } else {
+            throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", configName));
+        }
+    }
+
+    Throwable getError() {
+        return error;
     }
 }

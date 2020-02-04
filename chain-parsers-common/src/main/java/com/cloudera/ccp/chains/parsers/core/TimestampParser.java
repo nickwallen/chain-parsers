@@ -61,6 +61,9 @@ public class TimestampParser implements Parser {
             requireN(outputFieldConfig, configValues, 1);
             FieldName fieldName = FieldName.of(configValues.get(0).getValue());
             withOutputField(fieldName);
+
+        } else {
+            throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", configName));
         }
     }
 

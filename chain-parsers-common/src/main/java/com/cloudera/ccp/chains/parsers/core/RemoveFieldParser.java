@@ -17,7 +17,7 @@ import java.util.List;
  */
 @MessageParser(name="Remove Field(s)", description="Removes a message field.")
 public class RemoveFieldParser implements Parser {
-    private static ConfigName removeConfig = ConfigName.of("remove", true);
+    static final ConfigName removeConfig = ConfigName.of("remove", true);
     private List<FieldName> fieldsToRemove;
 
     public RemoveFieldParser() {
@@ -56,5 +56,9 @@ public class RemoveFieldParser implements Parser {
         } else {
             throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", configName));
         }
+    }
+
+    List<FieldName> getFieldsToRemove() {
+        return fieldsToRemove;
     }
 }

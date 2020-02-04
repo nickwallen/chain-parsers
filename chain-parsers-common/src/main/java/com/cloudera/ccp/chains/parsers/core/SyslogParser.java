@@ -10,15 +10,19 @@ import com.cloudera.ccp.chains.parsers.Parser;
 import com.github.palindromicity.syslog.SyslogParserBuilder;
 import com.github.palindromicity.syslog.SyslogSpecification;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 import static java.lang.String.format;
+import static com.cloudera.ccp.chains.parsers.core.ParserUtils.requireN;
 
 @MessageParser(name="Syslog", description="Parses Syslog according to RFC 3164 and 5424.")
 public class SyslogParser implements Parser {
     public static final ConfigName inputFieldConfig = ConfigName.of("inputField", false);
+    public static final ConfigName specConfig = ConfigName.of("specification", false);
 
     private FieldName inputField;
     private SyslogSpecification specification;
@@ -61,17 +65,28 @@ public class SyslogParser implements Parser {
     @Override
     public List<FieldName> outputFields() {
         // TODO implement me
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
     public List<ConfigName> validConfigurations() {
-        // TODO implement me
-        return null;
+        return Arrays.asList(inputFieldConfig, specConfig);
     }
 
     @Override
     public void configure(ConfigName configName, List<ConfigValue> configValues) {
-        // TODO implement me
+        if(inputFieldConfig.equals(configName)) {
+            requireN(inputFieldConfig, configValues, 1);
+            String inputFieldArg = configValues.get(0).getValue();
+            withInputField(FieldName.of(inputFieldArg));
+
+        } else if(specConfig.equals(configName)) {
+            requireN(specConfig, configValues, 1);
+            String specArg = configValues.get(0).getValue();
+            withSpecification(SyslogSpecification.valueOf(specArg));
+
+        } else {
+            throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", configName));
+        }
     }
 }
