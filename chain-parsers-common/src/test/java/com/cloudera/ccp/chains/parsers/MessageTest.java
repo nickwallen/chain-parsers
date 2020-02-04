@@ -78,6 +78,49 @@ public class MessageTest {
     }
 
     @Test
+    void renameFields() {
+        Message original = Message.builder()
+                .addField(FieldName.of("original1"), FieldValue.of("value1"))
+                .addField(FieldName.of("original2"), FieldValue.of("value2"))
+                .addField(FieldName.of("original3"), FieldValue.of("value3"))
+                .build();
+
+        // rename 'original1' to 'new1'
+        Message actual = Message.builder()
+                .withFields(original)
+                .renameField(FieldName.of("original1"), FieldName.of("new1"))
+                .renameField(FieldName.of("original2"), FieldName.of("new2"))
+                .build();
+
+        // validate
+        Message expected = Message.builder()
+                .addField(FieldName.of("new1"), FieldValue.of("value1"))
+                .addField(FieldName.of("new2"), FieldValue.of("value2"))
+                .addField(FieldName.of("original3"), FieldValue.of("value3"))
+                .build();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void renameMissingField() {
+        Message original = Message.builder()
+                .addField(FieldName.of("field1"), FieldValue.of("value1"))
+                .build();
+
+        // rename 'missing1' which does not exist
+        Message actual = Message.builder()
+                .withFields(original)
+                .renameField(FieldName.of("missing1"), FieldName.of("new1"))
+                .build();
+
+        // validate
+        Message expected = Message.builder()
+                .addField(FieldName.of("field1"), FieldValue.of("value1"))
+                .build();
+        assertEquals(expected, actual);
+    }
+
+    @Test
     void withFields() {
         Message original = Message.builder()
                 .addField(FieldName.of("field1"), FieldValue.of("value1"))

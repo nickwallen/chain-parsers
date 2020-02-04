@@ -13,7 +13,6 @@ import java.util.Optional;
  * Parses a {@link Message} using a parser chain.
  */
 public class ChainRunner {
-    Logger logger = LoggerFactory.getLogger(ChainRunner.class);
 
     /**
      * Parses a message using a parser chain.

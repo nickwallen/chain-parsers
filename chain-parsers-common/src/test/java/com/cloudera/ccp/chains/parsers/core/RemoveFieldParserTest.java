@@ -1,12 +1,16 @@
 package com.cloudera.ccp.chains.parsers.core;
 
+import com.cloudera.ccp.chains.parsers.ConfigName;
 import com.cloudera.ccp.chains.parsers.FieldName;
 import com.cloudera.ccp.chains.parsers.FieldValue;
 import com.cloudera.ccp.chains.parsers.Message;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RemoveFieldParserTest {
 
@@ -42,5 +46,11 @@ public class RemoveFieldParserTest {
         assertEquals(FieldValue.of("value1"), output.getField(FieldName.of("field1")).get());
         assertEquals(FieldValue.of("value2"), output.getField(FieldName.of("field2")).get());
         assertEquals(FieldValue.of("value3"), output.getField(FieldName.of("field3")).get());
+    }
+
+    @Test
+    void unexpectedConfig() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new RemoveFieldParser().configure(ConfigName.of("invalid", false), Collections.emptyList()));
     }
 }

@@ -15,18 +15,17 @@ import java.util.List;
 /**
  * A parser which can remove fields from a message.
  */
-@MessageParser(name="Remove Field", description="Removes a field from a message.")
+@MessageParser(name="Remove Field(s)", description="Removes a message field.")
 public class RemoveFieldParser implements Parser {
-    private static ConfigName toRemoveConfig = ConfigName.of("toRemove", true);
-
-    private List<FieldName> toRemove;
+    private static ConfigName removeConfig = ConfigName.of("remove", true);
+    private List<FieldName> fieldsToRemove;
 
     public RemoveFieldParser() {
-        toRemove = new ArrayList<>();
+        fieldsToRemove = new ArrayList<>();
     }
 
     public RemoveFieldParser removeField(FieldName fieldName) {
-        toRemove.add(fieldName);
+        fieldsToRemove.add(fieldName);
         return this;
     }
 
@@ -34,7 +33,7 @@ public class RemoveFieldParser implements Parser {
     public Message parse(Message message) {
         return Message.builder()
                 .withFields(message)
-                .removeFields(toRemove)
+                .removeFields(fieldsToRemove)
                 .build();
     }
 
@@ -45,15 +44,17 @@ public class RemoveFieldParser implements Parser {
 
     @Override
     public List<ConfigName> validConfigurations() {
-        return Arrays.asList(toRemoveConfig);
+        return Arrays.asList(removeConfig);
     }
 
     @Override
     public void configure(ConfigName configName, List<ConfigValue> configValues) {
-        if(toRemoveConfig.equals(configName)) {
+        if(removeConfig.equals(configName)) {
             for(ConfigValue configValue: configValues) {
                 removeField(FieldName.of(configValue.getValue()));
             }
+        } else {
+            throw new IllegalArgumentException(String.format("Unexpected configuration; name=%s", configName));
         }
     }
 }

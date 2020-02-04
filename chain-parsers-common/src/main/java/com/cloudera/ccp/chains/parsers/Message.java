@@ -78,6 +78,21 @@ public class Message {
         }
 
         /**
+         * Renames a field, if the field exists within the message. If the
+         * field does not exist, no action taken.
+         * @param from The original field name.
+         * @param to The new field name.
+         * @return
+         */
+        public Builder renameField(FieldName from, FieldName to) {
+            if(fields.containsKey(from)) {
+                FieldValue value = fields.remove(from);
+                fields.put(to, value);
+            }
+            return this;
+        }
+
+        /**
          * Adds an error to the message. This indicates that an error
          * occurred while parsing.
          * @param error The error that occurred.
