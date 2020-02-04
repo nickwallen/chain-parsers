@@ -4,7 +4,6 @@ import com.cloudera.ccp.chains.parsers.FieldName;
 import com.cloudera.ccp.chains.parsers.FieldValue;
 import com.cloudera.ccp.chains.parsers.Message;
 import com.github.palindromicity.syslog.SyslogSpecification;
-import com.github.palindromicity.syslog.dsl.ParseException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
